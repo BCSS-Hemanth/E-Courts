@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>eCourts Order Date Search | Official Order Retrieval</title>
+    <meta name="description" content="Search court orders by date and view available results from the official eCourts website. Independent search portal.">
+    
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body class="bg-light">
+
+    <!-- Top Navigation / Disclaimer Banner -->
+    <header class="navbar-banner py-2 text-white">
+        <div class="container d-flex justify-content-between align-items-center flex-wrap gap-2">
+            <div class="d-flex align-items-center gap-2">
+                <i class="bi bi-shield-check text-warning fs-5"></i>
+                <span class="small fw-medium">Independent Public Interface &bull; Direct eCourts Live Bridge</span>
+            </div>
+            <div class="badge bg-light text-dark fw-normal rounded-pill px-3 py-1">
+                <i class="bi bi-info-circle me-1 text-primary"></i> Not an Official Government Portal
+            </div>
+        </div>
+    </header>
+
+    <main class="container my-4 my-md-5">
+        <!-- Main Card Container -->
+        <div class="row justify-content-center">
+            <div class="col-12 col-xl-10">
+
+                <!-- Header Section -->
+                <div class="text-center mb-4">
+                    <div class="portal-badge mb-2">
+                        <i class="bi bi-journal-text me-1"></i> COURT ORDERS SEARCH
+                    </div>
+                    <h1 class="portal-title fw-bold">eCourts Order Date Search</h1>
+                    <p class="portal-subtitle text-muted mx-auto">
+                        Search court orders by date and view available results from the official eCourts website.
+                    </p>
+                </div>
+
+                <!-- Search Card -->
+                <div class="card shadow-sm border-0 rounded-4 overflow-hidden search-card">
+                    <div class="card-header bg-white border-bottom py-3 px-4 d-flex justify-content-between align-items-center flex-wrap gap-2">
+                        <div class="d-flex align-items-center gap-2">
+                            <span class="active-tab-indicator">
+                                <i class="bi bi-calendar-event text-primary me-1"></i> Order Date Search
+                            </span>
+                        </div>
+                        <span class="text-danger small fw-semibold">
+                            * Fields marked with * are required
+                        </span>
+                    </div>
+
+                    <div class="card-body p-4 p-md-5">
+                        <form id="orderDateSearchForm" novalidate>
+                            
+                            <!-- Location Section -->
+                            <div class="section-label mb-3">
+                                <i class="bi bi-geo-alt-fill text-primary me-1"></i>
+                                <span>Court Location (Type manually)</span>
+                            </div>
+
+                            <div class="row g-3 mb-4">
+                                <!-- State Text Input -->
+                                <div class="col-md-4">
+                                    <label for="stateInput" class="form-label required-field">State</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-white border-end-0"><i class="bi bi-map text-muted"></i></span>
+                                        <input type="text" class="form-control border-start-0" id="stateInput" name="state" placeholder="Enter State Name" required autocomplete="off">
+                                    </div>
+                                    <div class="invalid-feedback" id="stateFeedback">Please enter a valid State name.</div>
+                                    <div class="form-text small">e.g. Telangana, Andhra Pradesh, Delhi, Maharashtra, Karnataka</div>
+                                </div>
+
+                                <!-- District Text Input -->
+                                <div class="col-md-4">
+                                    <label for="districtInput" class="form-label required-field">District</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-white border-end-0"><i class="bi bi-buildings text-muted"></i></span>
+                                        <input type="text" class="form-control border-start-0" id="districtInput" name="district" placeholder="Enter District Name" required autocomplete="off">
+                                    </div>
+                                    <div class="invalid-feedback" id="districtFeedback">Please enter a valid District name.</div>
+                                    <div class="form-text small">e.g. Hyderabad, Ranga Reddy, New Delhi, Mumbai, Bengaluru Urban</div>
+                                </div>
+
+                                <!-- Court Complex Text Input -->
+                                <div class="col-md-4">
+                                    <label for="courtComplexInput" class="form-label required-field">Court Complex</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-white border-end-0"><i class="bi bi-bank text-muted"></i></span>
+                                        <input type="text" class="form-control border-start-0" id="courtComplexInput" name="court_complex" placeholder="Enter Court Complex Name" required autocomplete="off">
+                                    </div>
+                                    <div class="invalid-feedback" id="courtComplexFeedback">Please enter a valid Court Complex name.</div>
+                                    <div class="form-text small">e.g. Nampally Criminal Courts, Patiala House Courts, City Civil Court</div>
+                                </div>
+                            </div>
+
+                            <hr class="my-4 text-muted opacity-25">
+
+                            <!-- Order Date Fields (matching screenshot) -->
+                            <div class="section-label mb-3">
+                                <i class="bi bi-calendar2-range-fill text-primary me-1"></i>
+                                <span>Order Date Criteria &amp; Type</span>
+                            </div>
+
+                            <div class="row g-3 align-items-center mb-4">
+                                <!-- From Date -->
+                                <div class="col-12 col-md-4 col-lg-3">
+                                    <label for="fromDateInput" class="form-label required-field">*From Date</label>
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" id="fromDateInput" name="from_date" placeholder="DD-MM-YYYY" required pattern="\d{2}-\d{2}-\d{4}">
+                                        <button class="btn btn-outline-secondary datepicker-btn" type="button" id="fromDateBtn" title="Choose date">
+                                            <i class="bi bi-calendar3 text-danger"></i>
+                                        </button>
+                                        <input type="date" id="nativeFromDate" class="visually-hidden">
+                                    </div>
+                                    <div class="invalid-feedback" id="fromDateFeedback">Valid DD-MM-YYYY required.</div>
+                                </div>
+
+                                <!-- To Date -->
+                                <div class="col-12 col-md-4 col-lg-3">
+                                    <label for="toDateInput" class="form-label required-field">*To Date</label>
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" id="toDateInput" name="to_date" placeholder="DD-MM-YYYY" required pattern="\d{2}-\d{2}-\d{4}">
+                                        <button class="btn btn-outline-secondary datepicker-btn" type="button" id="toDateBtn" title="Choose date">
+                                            <i class="bi bi-calendar3 text-danger"></i>
+                                        </button>
+                                        <input type="date" id="nativeToDate" class="visually-hidden">
+                                    </div>
+                                    <div class="invalid-feedback" id="toDateFeedback">Valid DD-MM-YYYY required.</div>
+                                </div>
+
+                                <!-- Order Type Radio Buttons -->
+                                <div class="col-12 col-md-12 col-lg-6">
+                                    <label class="form-label d-block text-secondary small fw-bold text-uppercase">Order Classification</label>
+                                    <div class="order-type-radios p-2 rounded-3 bg-light border d-inline-flex flex-wrap gap-3">
+                                        <div class="form-check form-check-inline m-0">
+                                            <input class="form-check-input" type="radio" name="order_type" id="orderTypeInterim" value="interim" checked>
+                                            <label class="form-check-label fw-medium" for="orderTypeInterim">Interim Orders</label>
+                                        </div>
+                                        <div class="form-check form-check-inline m-0">
+                                            <input class="form-check-input" type="radio" name="order_type" id="orderTypeFinal" value="final">
+                                            <label class="form-check-label fw-medium" for="orderTypeFinal">Final Orders</label>
+                                        </div>
+                                        <div class="form-check form-check-inline m-0">
+                                            <input class="form-check-input" type="radio" name="order_type" id="orderTypeBoth" value="both">
+                                            <label class="form-check-label fw-medium" for="orderTypeBoth">Both</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- CAPTCHA Section (In-line as per screenshot) -->
+                            <div class="captcha-container-box p-3 rounded-3 border mb-4 bg-white shadow-xs" id="captchaSection">
+                                <div class="row align-items-center g-3">
+                                    <div class="col-auto">
+                                        <label class="form-label fw-semibold text-secondary mb-0">Captcha</label>
+                                    </div>
+                                    
+                                    <!-- Captcha Image Display Box -->
+                                    <div class="col-auto">
+                                        <div class="captcha-display-frame d-flex align-items-center justify-content-center border rounded px-2" id="captchaFrame">
+                                            <img id="captchaImage" src="" alt="CAPTCHA" class="d-none">
+                                            <span id="captchaPlaceholderText" class="text-muted small fst-italic">Generated on search</span>
+                                        </div>
+                                    </div>
+
+                                    <!-- Captcha Controls: Audio and Refresh -->
+                                    <div class="col-auto d-flex gap-1">
+                                        <button type="button" class="btn btn-outline-secondary btn-sm" id="captchaAudioBtn" title="Play Captcha Audio">
+                                            <i class="bi bi-volume-up-fill"></i>
+                                        </button>
+                                        <button type="button" class="btn btn-outline-secondary btn-sm" id="captchaRefreshBtn" title="Refresh Captcha">
+                                            <i class="bi bi-arrow-repeat"></i>
+                                        </button>
+                                    </div>
+
+                                    <!-- Captcha Input Field -->
+                                    <div class="col-12 col-sm-auto d-flex align-items-center gap-2">
+                                        <label for="captchaInput" class="form-label required-field mb-0 text-nowrap">*Enter Captcha</label>
+                                        <input type="text" class="form-control" id="captchaInput" name="captcha" placeholder="Enter Captcha" style="max-width: 170px;" autocomplete="off" disabled>
+                                    </div>
+                                    <div class="col-12 d-none" id="captchaHelperMessage">
+                                        <div class="small text-primary">
+                                            <i class="bi bi-info-circle me-1"></i> Click <strong>Go</strong> to begin; if CAPTCHA verification is required, it will appear here for you to solve.
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Action Buttons: Go and Reset -->
+                            <div class="d-flex align-items-center gap-3 mt-4">
+                                <button type="submit" class="btn btn-primary px-4 py-2 fw-semibold d-flex align-items-center gap-2" id="goButton">
+                                    <span class="spinner-border spinner-border-sm d-none" id="goSpinner" role="status" aria-hidden="true"></span>
+                                    <span id="goButtonText">Go</span>
+                                </button>
+                                <button type="button" class="btn btn-secondary px-4 py-2 fw-semibold" id="resetButton">
+                                    Reset
+                                </button>
+                            </div>
+
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Status Feedback & Alerts Box -->
+                <div class="mt-4" id="statusContainer" style="display: none;">
+                    <div class="alert alert-dismissible fade show d-flex align-items-start gap-3 p-3 rounded-3 shadow-xs" id="statusAlert" role="alert">
+                        <div id="statusIcon" class="fs-4"></div>
+                        <div class="flex-grow-1">
+                            <h6 class="alert-heading fw-bold mb-1" id="statusTitle">Searching...</h6>
+                            <p class="mb-0 small" id="statusMessage">Processing your request...</p>
+                            <!-- Progress Bar for searching state -->
+                            <div class="progress mt-2 d-none" id="statusProgressBar" style="height: 6px;">
+                                <div class="progress-bar progress-bar-striped progress-bar-animated bg-primary" role="progressbar" style="width: 100%"></div>
+                            </div>
+                        </div>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                </div>
+
+                <!-- Results Section -->
+                <div class="card shadow-sm border-0 rounded-4 overflow-hidden mt-4 d-none" id="resultsCard">
+                    <div class="card-header bg-white py-3 px-4 d-flex justify-content-between align-items-center flex-wrap gap-2">
+                        <div class="d-flex align-items-center gap-2">
+                            <i class="bi bi-table text-primary fs-5"></i>
+                            <h5 class="fw-bold mb-0">Court Order Records</h5>
+                            <span class="badge bg-primary rounded-pill ms-2" id="resultsCountBadge">0 Orders</span>
+                        </div>
+                        <button class="btn btn-outline-secondary btn-sm" id="exportCsvBtn" title="Export displayed table">
+                            <i class="bi bi-download me-1"></i> Export View
+                        </button>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle mb-0" id="resultsTable">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th scope="col" style="width: 60px;">#</th>
+                                        <th scope="col">Case Number &amp; Type</th>
+                                        <th scope="col">Party Names</th>
+                                        <th scope="col">Order Date</th>
+                                        <th scope="col">Order Type / No</th>
+                                        <th scope="col">Presiding Court / Judge</th>
+                                        <th scope="col" class="text-center" style="width: 170px;">Official Document</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="resultsTableBody">
+                                    <!-- Rendered dynamically -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="card-footer bg-white text-muted small py-2 px-4 border-top">
+                        <i class="bi bi-info-circle me-1 text-primary"></i> Document links open the official order directly from the eCourts portal in a new tab.
+                    </div>
+                </div>
+
+                <!-- Collapsible Help / How To Section -->
+                <div class="accordion shadow-sm rounded-4 border-0 mt-4 overflow-hidden" id="helpAccordion">
+                    <div class="accordion-item border-0">
+                        <h2 class="accordion-header" id="headingHelp">
+                            <button class="accordion-button collapsed fw-semibold text-secondary bg-white" type="button" data-bs-toggle="collapse" data-bs-target="#collapseHelp" aria-expanded="false" aria-controls="collapseHelp">
+                                <i class="bi bi-question-circle text-primary me-2 fs-5"></i> Help &amp; How To Use This Search Interface
+                            </button>
+                        </h2>
+                        <div id="collapseHelp" class="accordion-collapse collapse" aria-labelledby="headingHelp" data-bs-parent="#helpAccordion">
+                            <div class="accordion-body bg-white pt-2 pb-4 px-4 text-secondary">
+                                <div class="row g-4">
+                                    <div class="col-md-6">
+                                        <h6 class="fw-bold text-dark"><i class="bi bi-1-circle-fill text-primary me-1"></i> Entering Location Fields</h6>
+                                        <p class="small mb-2">
+                                            Type the exact or standard names of the <strong>State</strong>, <strong>District</strong>, and <strong>Court Complex</strong>.
+                                            Leading and trailing spaces are automatically trimmed.
+                                        </p>
+                                        <div class="p-2 bg-light rounded small">
+                                            <strong>Example:</strong><br>
+                                            State: <code>Delhi</code><br>
+                                            District: <code>New Delhi</code><br>
+                                            Court Complex: <code>Patiala House Courts</code>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <h6 class="fw-bold text-dark"><i class="bi bi-2-circle-fill text-primary me-1"></i> Order Date Criteria</h6>
+                                        <p class="small mb-2">
+                                            Enter the date range in <code>DD-MM-YYYY</code> format. 
+                                            You can click the calendar icon to use the system date picker.
+                                        </p>
+                                        <ul class="small mb-0 ps-3">
+                                            <li><strong>Interim Orders:</strong> Orders issued during proceedings.</li>
+                                            <li><strong>Final Orders:</strong> Concluding judgments and decrees.</li>
+                                            <li><strong>Both:</strong> Retrieves all available orders.</li>
+                                        </ul>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <h6 class="fw-bold text-dark"><i class="bi bi-3-circle-fill text-primary me-1"></i> CAPTCHA Verification</h6>
+                                        <p class="small mb-0">
+                                            When you click <strong>Go</strong>, the automated browser connects to the portal. If the official portal presents a CAPTCHA challenge, the challenge image will be displayed on screen. Type the characters into the <strong>*Enter Captcha</strong> box and submit to continue.
+                                        </p>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <h6 class="fw-bold text-dark"><i class="bi bi-4-circle-fill text-primary me-1"></i> Official Document Links</h6>
+                                        <p class="small mb-0">
+                                            When results are found, click <strong>Open Official Order</strong>. It opens the authentic eCourts PDF link in a new secure browser tab. No copies are saved locally.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Footer -->
+                <footer class="text-center text-muted small mt-5 mb-4">
+                    <p class="mb-1">&copy; 2024 eCourts Order Date Search Interface &bull; Powered by Playwright &amp; FastAPI</p>
+                    <p class="opacity-75">All court orders and judgments remain the exclusive property and record of the Indian Judiciary.</p>
+                </footer>
+
+            </div>
+        </div>
+    </main>
+
+    <!-- Bootstrap 5 JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Modular Custom JavaScript Files -->
+    <script src="/static/js/results.js"></script>
+    <script src="/static/js/search.js"></script>
+    <script src="/static/js/app.js"></script>
+</body>
+</html>

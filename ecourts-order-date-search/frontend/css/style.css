@@ -84,16 +84,23 @@ label.required-field {
 }
 
 /* Form Controls */
-.form-control {
+.form-control, .form-select {
     border-color: #cbd5e1;
     padding: 0.55rem 0.85rem;
     font-size: 0.92rem;
     transition: all 0.2s ease;
 }
 
-.form-control:focus {
+.form-control:focus, .form-select:focus {
     border-color: var(--primary-color);
     box-shadow: 0 0 0 3px rgba(43, 76, 126, 0.15);
+}
+
+.form-select:disabled {
+    background-color: #f8fafc;
+    color: #94a3b8;
+    cursor: not-allowed;
+    border-color: #e2e8f0;
 }
 
 .input-group-text {

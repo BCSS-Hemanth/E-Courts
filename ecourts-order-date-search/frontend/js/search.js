@@ -184,12 +184,99 @@ const SearchModule = (() => {
 
     function setFormDisabled(disabled) {
         stateInput.disabled = disabled;
-        districtInput.disabled = disabled;
-        courtComplexInput.disabled = disabled;
+        districtInput.disabled = disabled || !stateInput.value;
+        courtComplexInput.disabled = disabled || !districtInput.value;
         fromDateInput.disabled = disabled;
         toDateInput.disabled = disabled;
         document.querySelectorAll("input[name='order_type']").forEach(r => r.disabled = disabled);
         goButton.disabled = disabled;
+    }
+
+    /**
+     * Location Cascading: Load States, Districts, and Complexes
+     */
+    async function loadStates() {
+        try {
+            stateInput.innerHTML = '<option value="">Loading States...</option>';
+            const response = await fetch("/api/locations/states");
+            if (!response.ok) throw new Error("Failed to load states");
+            const states = await response.json();
+
+            stateInput.innerHTML = '<option value="">Select State</option>';
+            states.forEach(s => {
+                const opt = document.createElement("option");
+                opt.value = s.code;
+                opt.textContent = s.name;
+                opt.dataset.name = s.name;
+                stateInput.appendChild(opt);
+            });
+        } catch (err) {
+            console.error("Error loading states:", err);
+            stateInput.innerHTML = '<option value="">Error loading states</option>';
+        }
+    }
+
+    async function handleStateChange() {
+        const stateCode = stateInput.value;
+        districtInput.innerHTML = '<option value="">Select District</option>';
+        courtComplexInput.innerHTML = '<option value="">Select Court Complex</option>';
+        courtComplexInput.disabled = true;
+
+        if (!stateCode) {
+            districtInput.disabled = true;
+            return;
+        }
+
+        districtInput.disabled = false;
+        districtInput.innerHTML = '<option value="">Loading Districts...</option>';
+        try {
+            const response = await fetch(`/api/locations/districts?state_code=${encodeURIComponent(stateCode)}`);
+            if (!response.ok) throw new Error("Failed to load districts");
+            const districts = await response.json();
+
+            districtInput.innerHTML = '<option value="">Select District</option>';
+            districts.forEach(d => {
+                const opt = document.createElement("option");
+                opt.value = d.code;
+                opt.textContent = d.name;
+                opt.dataset.name = d.name;
+                districtInput.appendChild(opt);
+            });
+        } catch (err) {
+            console.error("Error loading districts:", err);
+            districtInput.innerHTML = '<option value="">Error loading districts</option>';
+        }
+    }
+
+    async function handleDistrictChange() {
+        const stateCode = stateInput.value;
+        const distCode = districtInput.value;
+        courtComplexInput.innerHTML = '<option value="">Select Court Complex</option>';
+
+        if (!distCode) {
+            courtComplexInput.disabled = true;
+            return;
+        }
+
+        courtComplexInput.disabled = false;
+        courtComplexInput.innerHTML = '<option value="">Loading Court Complexes...</option>';
+        try {
+            const response = await fetch(`/api/locations/complexes?state_code=${encodeURIComponent(stateCode)}&dist_code=${encodeURIComponent(distCode)}`);
+            if (!response.ok) throw new Error("Failed to load complexes");
+            const complexes = await response.json();
+
+            courtComplexInput.innerHTML = '<option value="">Select Court Complex</option>';
+            complexes.forEach(c => {
+                const opt = document.createElement("option");
+                opt.value = c.code;
+                opt.textContent = c.name;
+                opt.dataset.name = c.name;
+                courtComplexInput.appendChild(opt);
+            });
+        } catch (err) {
+            console.error("Error loading court complexes:", err);
+            courtComplexInput.innerHTML = '<option value="">Error loading court complexes</option>';
+        }
     }
 
     /**
@@ -290,11 +377,18 @@ const SearchModule = (() => {
         // Clear existing results
         ResultsModule.clearResults();
 
-        // Read values (trimmed)
+        // Read values from dropdowns (both display text and official codes)
+        const stateOpt = stateInput.selectedOptions[0];
+        const distOpt = districtInput.selectedOptions[0];
+        const complexOpt = courtComplexInput.selectedOptions[0];
+
         const payload = {
-            state: stateInput.value.trim(),
-            district: districtInput.value.trim(),
-            court_complex: courtComplexInput.value.trim(),
+            state: stateOpt ? (stateOpt.dataset.name || stateOpt.textContent.trim()) : "",
+            state_code: stateInput.value || null,
+            district: distOpt ? (distOpt.dataset.name || distOpt.textContent.trim()) : "",
+            district_code: districtInput.value || null,
+            court_complex: complexOpt ? (complexOpt.dataset.name || complexOpt.textContent.trim()) : "",
+            court_complex_code: courtComplexInput.value || null,
             order_date_criteria: {
                 from_date: fromDateInput.value.trim(),
                 to_date: toDateInput.value.trim(),
@@ -472,6 +566,10 @@ const SearchModule = (() => {
 
         // Reset inputs
         searchForm.reset();
+        districtInput.innerHTML = '<option value="">Select District</option>';
+        districtInput.disabled = true;
+        courtComplexInput.innerHTML = '<option value="">Select Court Complex</option>';
+        courtComplexInput.disabled = true;
         document.getElementById("orderTypeInterim").checked = true;
 
         // Remove invalid classes
@@ -488,6 +586,8 @@ const SearchModule = (() => {
         init: () => {
             searchForm.addEventListener("submit", handleSearchSubmit);
             resetButton.addEventListener("click", handleReset);
+            stateInput.addEventListener("change", handleStateChange);
+            districtInput.addEventListener("change", handleDistrictChange);
             
             // Allow pressing Enter in captcha input
             captchaInput.addEventListener("keydown", (e) => {
@@ -496,6 +596,9 @@ const SearchModule = (() => {
                     handleCaptchaSubmit();
                 }
             });
+
+            // Populate States dropdown on load
+            loadStates();
         },
         getState: () => currentState
     };

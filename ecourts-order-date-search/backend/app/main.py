@@ -21,6 +21,7 @@ import logging
 
 from app.config import settings
 from app.routers.search import router as search_router
+from app.routers.locations import router as locations_router
 from app.services.session_manager import session_manager
 
 logging.basicConfig(
@@ -56,6 +57,7 @@ app.add_middleware(
 
 # Include API Routers
 app.include_router(search_router)
+app.include_router(locations_router)
 
 # Mount Frontend static files
 FRONTEND_DIR = Path(__file__).resolve().parent.parent.parent / "frontend"

@@ -69,25 +69,37 @@ class OrderDateCriteria(BaseModel):
 class SearchRequest(BaseModel):
     """
     User search submission.
-    State, District, and Court Complex are strictly ordinary text inputs.
+    State, District, and Court Complex selected via dropdowns with optional exact codes.
     """
     state: str = Field(
         ...,
         min_length=1,
-        description="State name entered manually (e.g., Delhi, Maharashtra)",
-        examples=["Delhi"]
+        description="State name (e.g., Telangana, Delhi, Maharashtra)",
+        examples=["Telangana"]
     )
     district: str = Field(
         ...,
         min_length=1,
-        description="District name entered manually (e.g., New Delhi, Mumbai)",
-        examples=["New Delhi"]
+        description="District name (e.g., Rangareddy, New Delhi, Mumbai)",
+        examples=["Rangareddy"]
     )
     court_complex: str = Field(
         ...,
         min_length=1,
-        description="Court Complex name entered manually (e.g., Patiala House Courts)",
-        examples=["Patiala House Courts"]
+        description="Court Complex name (e.g., Kukatpally, ADJ-cum-Family Court)",
+        examples=["Kukatpally, ADJ-cum-Family Court"]
+    )
+    state_code: Optional[str] = Field(
+        default=None,
+        description="Official eCourts state code (e.g. '29')"
+    )
+    district_code: Optional[str] = Field(
+        default=None,
+        description="Official eCourts district code (e.g. '9')"
+    )
+    court_complex_code: Optional[str] = Field(
+        default=None,
+        description="Official eCourts complex code (e.g. '1290115@36,37,38@N')"
     )
     order_date_criteria: OrderDateCriteria
 

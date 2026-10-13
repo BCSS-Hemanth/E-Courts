@@ -25,6 +25,7 @@ from PIL import Image, ImageDraw, ImageFont
 from app.config import settings
 from app.schemas import SearchRequest, SearchStatus, CourtOrderResult
 from app.services.session_manager import session_manager, SearchSession
+from app.services.captcha_solver import captcha_solver
 
 logger = logging.getLogger(__name__)
 
@@ -698,15 +699,19 @@ class ECourtsScraperService:
 
         # Extract available state options
         state_options = await state_select_loc.evaluate("""el => Array.from(el.options).map(o => ({ value: o.value, text: o.text.trim() }))""")
-        matched_state_val, state_err = match_option(req.state, state_options)
-        if state_err:
-            await session_manager.update_status(
-                search_id,
-                SearchStatus.FAILED,
-                message=f"State selection error: {state_err}",
-                error_code="UNMATCHED_STATE"
-            )
-            return
+        matched_state_val = None
+        if req.state_code and any(o["value"] == req.state_code for o in state_options):
+            matched_state_val = req.state_code
+        else:
+            matched_state_val, state_err = match_option(req.state, state_options)
+            if state_err:
+                await session_manager.update_status(
+                    search_id,
+                    SearchStatus.FAILED,
+                    message=f"State selection error: {state_err}",
+                    error_code="UNMATCHED_STATE"
+                )
+                return
 
         await state_select_loc.select_option(value=matched_state_val)
 
@@ -728,15 +733,19 @@ class ECourtsScraperService:
             raise RuntimeError("District options failed to load for the selected State.")
 
         dist_options = await dist_select_loc.evaluate("""el => Array.from(el.options).map(o => ({ value: o.value, text: o.text.trim() }))""")
-        matched_dist_val, dist_err = match_option(req.district, dist_options)
-        if dist_err:
-            await session_manager.update_status(
-                search_id,
-                SearchStatus.FAILED,
-                message=f"District selection error: {dist_err}",
-                error_code="UNMATCHED_DISTRICT"
-            )
-            return
+        matched_dist_val = None
+        if req.district_code and any(o["value"] == req.district_code for o in dist_options):
+            matched_dist_val = req.district_code
+        else:
+            matched_dist_val, dist_err = match_option(req.district, dist_options)
+            if dist_err:
+                await session_manager.update_status(
+                    search_id,
+                    SearchStatus.FAILED,
+                    message=f"District selection error: {dist_err}",
+                    error_code="UNMATCHED_DISTRICT"
+                )
+                return
 
         await dist_select_loc.select_option(value=matched_dist_val)
 
@@ -757,15 +766,19 @@ class ECourtsScraperService:
             raise RuntimeError("Court Complex options failed to load for the selected District.")
 
         court_options = await court_select_loc.evaluate("""el => Array.from(el.options).map(o => ({ value: o.value, text: o.text.trim() }))""")
-        matched_court_val, court_err = match_option(req.court_complex, court_options)
-        if court_err:
-            await session_manager.update_status(
-                search_id,
-                SearchStatus.FAILED,
-                message=f"Court Complex selection error: {court_err}",
-                error_code="UNMATCHED_COURT_COMPLEX"
-            )
-            return
+        matched_court_val = None
+        if req.court_complex_code and any(o["value"] == req.court_complex_code for o in court_options):
+            matched_court_val = req.court_complex_code
+        else:
+            matched_court_val, court_err = match_option(req.court_complex, court_options)
+            if court_err:
+                await session_manager.update_status(
+                    search_id,
+                    SearchStatus.FAILED,
+                    message=f"Court Complex selection error: {court_err}",
+                    error_code="UNMATCHED_COURT_COMPLEX"
+                )
+                return
 
         await court_select_loc.select_option(value=matched_court_val)
         await page.wait_for_timeout(1500)
@@ -857,60 +870,11 @@ class ECourtsScraperService:
             except Exception:
                 await radio_loc.evaluate("el => { el.checked = true; el.dispatchEvent(new Event('change')); }")
 
-        # --- STEP 7: CAPTCHA Handling ---
-        captcha_img_loc = page.locator("#orderdatetab img[src*='securimage_show'], #captcha_image, img[src*='securimage_show'], img#captcha_img").first
-        if await captcha_img_loc.count() > 0:
-            try:
-                img_bytes = await captcha_img_loc.screenshot()
-                b64_img = f"data:image/png;base64,{base64.b64encode(img_bytes).decode('utf-8')}"
-
-                await session_manager.update_status(
-                    search_id,
-                    SearchStatus.CAPTCHA_REQUIRED,
-                    message="Manual verification required: Please enter the CAPTCHA characters shown below.",
-                    captcha_image=b64_img
-                )
-
-                # Wait for user to submit captcha through the frontend
-                logger.info(f"Waiting for user to submit CAPTCHA for session {search_id}...")
-                try:
-                    await asyncio.wait_for(session.captcha_event.wait(), timeout=180.0)
-                except asyncio.TimeoutError:
-                    await session_manager.update_status(
-                        search_id,
-                        SearchStatus.EXPIRED,
-                        message="CAPTCHA verification timed out after 3 minutes.",
-                        error_code="CAPTCHA_TIMEOUT"
-                    )
-                    return
-
-                if session.status == SearchStatus.CANCELLED:
-                    return
-
-                # Fill the entered CAPTCHA and ensure dates remain intact
-                await page.evaluate("""({ from_d, to_d, captcha_ans }) => {
-                    $('#from_date').off('input');
-                    $('#to_date').off('input');
-                    $('#from_date').val(from_d);
-                    $('#to_date').val(to_d);
-                    const elFrom = document.getElementById('from_date');
-                    if (elFrom) elFrom.value = from_d;
-                    const elTo = document.getElementById('to_date');
-                    if (elTo) elTo.value = to_d;
-
-                    $('#order_date_captcha_code').val(captcha_ans);
-                    const elC = document.getElementById('order_date_captcha_code');
-                    if (elC) elC.value = captcha_ans;
-                }""", {"from_d": criteria.from_date, "to_d": criteria.to_date, "captcha_ans": session.captcha_answer or ""})
-
-            except Exception as e:
-                logger.warning(f"Could not extract CAPTCHA image: {e}")
-
-        # --- STEP 8: Submit Search ("Go" Button) ---
+        # --- STEP 7 & 8: Automated CAPTCHA Solving & Submission Loop ---
         await session_manager.update_status(
             search_id,
             SearchStatus.RUNNING,
-            message="Submitting search and awaiting official court order records..."
+            message="Solving security verification and retrieving court records..."
         )
 
         last_dialog_msg: List[str] = []
@@ -929,6 +893,7 @@ class ECourtsScraperService:
             if "courtorder/submitOrderDate" in response.url:
                 try:
                     data = await response.json()
+                    submit_order_result.clear()
                     submit_order_result.update(data)
                     logger.info(f"eCourts submitOrderDate response: status={data.get('status')}")
                 except Exception as e:
@@ -936,52 +901,137 @@ class ECourtsScraperService:
 
         page.on("response", on_submit_response)
 
-        go_btn = page.locator("button[onclick*='submitOrderDate'], #frm_search_od_date button:has-text('Go'), #orderdatetab button:has-text('Go'), button:has-text('Go')").first
-        if await go_btn.count() > 0:
+        MAX_CAPTCHA_ATTEMPTS = 5
+        captcha_success = False
+
+        captcha_img_loc = page.locator("#orderdatetab img[src*='securimage_show'], #captcha_image, img[src*='securimage_show'], img#captcha_img").first
+        refresh_btn_loc = page.locator("#orderdatetab a[onclick*='captcha'], #orderdatetab button[onclick*='captcha'], #orderdatetab a:has(i[class*='refresh']), a[title*='Refresh'], a[onclick*='refresh']").first
+
+        for attempt in range(1, MAX_CAPTCHA_ATTEMPTS + 1):
+            if session.status == SearchStatus.CANCELLED:
+                return
+
+            logger.info(f"Automated CAPTCHA attempt {attempt}/{MAX_CAPTCHA_ATTEMPTS} for session {search_id}")
+            last_dialog_msg.clear()
+            submit_order_result.clear()
+
+            # Wait briefly for CAPTCHA image rendering
+            await page.wait_for_timeout(800)
+            if await captcha_img_loc.count() == 0:
+                logger.warning("No CAPTCHA image element found on page.")
+                break
+
+            img_bytes = None
             try:
-                await go_btn.click(timeout=5000)
-            except Exception:
+                img_bytes = await captcha_img_loc.screenshot()
+            except Exception as e:
+                logger.warning(f"Could not capture CAPTCHA screenshot: {e}")
+
+            if not img_bytes:
+                logger.warning("Empty CAPTCHA image bytes received.")
+                break
+
+            solved_code = captcha_solver.solve(img_bytes)
+            if not solved_code:
+                logger.warning(f"Attempt {attempt}: OCR returned empty prediction, refreshing CAPTCHA...")
+                try:
+                    if await refresh_btn_loc.count() > 0:
+                        await refresh_btn_loc.click()
+                    else:
+                        await page.evaluate("() => { if (typeof refreshCaptcha === 'function') refreshCaptcha(); }")
+                except Exception:
+                    pass
+                await page.wait_for_timeout(1200)
+                continue
+
+            logger.info(f"Attempt {attempt}: Solved CAPTCHA as '{solved_code}'. Submitting to eCourts...")
+
+            # Fill CAPTCHA and ensure dates remain intact
+            await page.evaluate("""({ from_d, to_d, captcha_ans }) => {
+                $('#from_date').off('input');
+                $('#to_date').off('input');
+                $('#from_date').val(from_d);
+                $('#to_date').val(to_d);
+                const elFrom = document.getElementById('from_date');
+                if (elFrom) elFrom.value = from_d;
+                const elTo = document.getElementById('to_date');
+                if (elTo) elTo.value = to_d;
+
+                $('#order_date_captcha_code').val(captcha_ans);
+                const elC = document.getElementById('order_date_captcha_code');
+                if (elC) elC.value = captcha_ans;
+            }""", {"from_d": criteria.from_date, "to_d": criteria.to_date, "captcha_ans": solved_code})
+
+            # Click Submit ("Go" button)
+            go_btn = page.locator("button[onclick*='submitOrderDate'], #frm_search_od_date button:has-text('Go'), #orderdatetab button:has-text('Go'), button:has-text('Go')").first
+            if await go_btn.count() > 0:
+                try:
+                    await go_btn.click(timeout=5000)
+                except Exception:
+                    await page.evaluate("() => { if (typeof submitOrderDate === 'function') submitOrderDate(); }")
+            else:
                 await page.evaluate("() => { if (typeof submitOrderDate === 'function') submitOrderDate(); }")
-        else:
-            await page.evaluate("() => { if (typeof submitOrderDate === 'function') submitOrderDate(); }")
 
-        # Wait for results table or dialog/alert response
-        for _ in range(50):  # up to 25 seconds
-            await page.wait_for_timeout(500)
-            if last_dialog_msg:
-                break
-            if submit_order_result.get("status") == 0:
-                break
-            table_rows = await page.locator("#coorderdt table tr").count()
-            if table_rows > 1:
-                break
-            # Check text inside results container
-            coorderdt_text = await page.evaluate("() => document.querySelector('#coorderdt')?.innerText?.toLowerCase() || ''")
-            if "not found" in coorderdt_text or "no record" in coorderdt_text or "invalid" in coorderdt_text:
+            # Wait for results or error response
+            invalid_detected = False
+            for _ in range(30):  # up to 15 seconds
+                await page.wait_for_timeout(500)
+                if last_dialog_msg:
+                    dlg = last_dialog_msg[-1].lower()
+                    if "invalid captcha" in dlg or "captcha" in dlg:
+                        invalid_detected = True
+                        break
+                    elif "no record" in dlg or "not found" in dlg:
+                        captcha_success = True
+                        break
+                if submit_order_result.get("status") == 0:
+                    invalid_detected = True
+                    break
+                elif submit_order_result.get("status") == 1:
+                    captcha_success = True
+                    break
+
+                table_rows = await page.locator("#coorderdt table tr").count()
+                if table_rows > 1:
+                    captcha_success = True
+                    break
+
+                coorderdt_text = await page.evaluate("() => document.querySelector('#coorderdt')?.innerText?.toLowerCase() || ''")
+                if "invalid" in coorderdt_text and "captcha" in coorderdt_text:
+                    invalid_detected = True
+                    break
+                elif "not found" in coorderdt_text or "no record" in coorderdt_text:
+                    captcha_success = True
+                    break
+
+            if captcha_success:
+                logger.info(f"CAPTCHA accepted successfully on attempt {attempt}!")
                 break
 
-        # Check if server reported invalid captcha
-        if submit_order_result.get("status") == 0:
+            if invalid_detected:
+                logger.warning(f"CAPTCHA '{solved_code}' rejected by eCourts on attempt {attempt}. Auto-refreshing to retry...")
+                try:
+                    if await refresh_btn_loc.count() > 0:
+                        await refresh_btn_loc.click()
+                    else:
+                        await page.evaluate("() => { if (typeof refreshCaptcha === 'function') refreshCaptcha(); }")
+                except Exception:
+                    pass
+                await page.wait_for_timeout(1200)
+
+        if not captcha_success:
             await session_manager.update_status(
                 search_id,
                 SearchStatus.FAILED,
-                message="Official eCourts portal reported: Invalid CAPTCHA entered. Please reset and retry.",
-                error_code="INVALID_CAPTCHA"
+                message="Automated security verification failed after multiple retries. Please retry search.",
+                error_code="CAPTCHA_MAX_RETRIES"
             )
             return
 
         # Check for alert dialog / error message
         if last_dialog_msg:
             dlg = last_dialog_msg[-1]
-            if "invalid captcha" in dlg.lower():
-                await session_manager.update_status(
-                    search_id,
-                    SearchStatus.FAILED,
-                    message=f"Official website reported: {dlg}",
-                    error_code="INVALID_CAPTCHA"
-                )
-                return
-            elif "establishment" in dlg.lower():
+            if "establishment" in dlg.lower():
                 await session_manager.update_status(
                     search_id,
                     SearchStatus.FAILED,
@@ -992,19 +1042,6 @@ class ECourtsScraperService:
 
         # Check text inside results container and visible alerts
         coorderdt_text = await page.evaluate("() => document.querySelector('#coorderdt')?.innerText?.trim() || ''")
-        visible_alert = await page.evaluate("""() => {
-            const el = document.querySelector('#validateError.show, #bs_alert.show, #errordiv:not([style*="none"])');
-            return el ? el.innerText.trim() : '';
-        }""")
-
-        if visible_alert and "invalid captcha" in visible_alert.lower():
-            await session_manager.update_status(
-                search_id,
-                SearchStatus.FAILED,
-                message="Official website reported: Invalid CAPTCHA entered. Please reset and retry.",
-                error_code="INVALID_CAPTCHA"
-            )
-            return
 
         if coorderdt_text and ("record not found" in coorderdt_text.lower() or "no records found" in coorderdt_text.lower() or "no record" in coorderdt_text.lower()):
             await session_manager.update_status(

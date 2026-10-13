@@ -1,130 +1,144 @@
 """
-Location service providing cascading Indian States, Districts, and Court Complexes.
-Loads from persistent cache for instant (0ms) response and falls back to
-live eCourts retrieval for uncached selections, caching them for future requests.
+Location Service for eCourts Order Date Search.
+Provides State, District, and Court Complex directory data cached locally
+to minimize hits to the official eCourts government portal.
 """
 
 import json
-import logging
-import os
+from pathlib import Path
 from typing import List, Dict, Any, Optional
-from playwright.async_api import async_playwright
 
-logger = logging.getLogger(__name__)
+from app.services.ecourts_scraper import MOCK_LOCATION_DB, normalize_text
 
-CACHE_FILE = os.path.join(os.path.dirname(os.path.dirname(__file__)), "data", "locations_cache.json")
+DATA_FILE = Path(__file__).resolve().parent.parent / "data" / "ecourts_locations.json"
+CACHE_FILE = Path(__file__).resolve().parent.parent / "data" / "locations_cache.json"
 
 
 class LocationService:
     def __init__(self):
-        self._cache: Dict[str, Any] = {
-            "states": [],
-            "districts": {},
-            "complexes": {}
-        }
-        self._load_cache()
+        self._cached_data: Optional[Dict[str, Any]] = None
 
-    def _load_cache(self):
-        if os.path.exists(CACHE_FILE):
+    def load_data(self) -> Dict[str, Any]:
+        """Load and merge local JSON cache with built-in reference database."""
+        locations_by_state: Dict[str, Dict[str, Any]] = {}
+
+        # 1. Base from MOCK_LOCATION_DB (fallback reference across all Indian States)
+        for s_name, districts in MOCK_LOCATION_DB.items():
+            dist_list = []
+            for d_name, complexes in districts.items():
+                dist_list.append({
+                    "dist_code": d_name,
+                    "dist_name": d_name,
+                    "complexes": [{"complex_code": c, "complex_name": c} for c in complexes]
+                })
+            norm_k = normalize_text(s_name)
+            locations_by_state[norm_k] = {
+                "state_code": s_name,
+                "state_name": s_name,
+                "districts": dist_list
+            }
+
+        # 2. Overlay live downloaded data from ecourts_locations.json
+        if DATA_FILE.exists():
             try:
-                with open(CACHE_FILE, "r", encoding="utf-8") as f:
-                    self._cache = json.load(f)
-                logger.info(f"Loaded {len(self._cache.get('states', []))} states from locations cache.")
+                with open(DATA_FILE, "r", encoding="utf-8") as f:
+                    file_data = json.load(f)
+                    for state in file_data.get("states", []):
+                        s_name = state.get("state_name", "")
+                        if not s_name:
+                            continue
+                        norm_k = normalize_text(s_name)
+                        matched_key = None
+                        for k in list(locations_by_state.keys()):
+                            if k == norm_k or (len(k) > 4 and (k in norm_k or norm_k in k)):
+                                matched_key = k
+                                break
+                        
+                        target_key = matched_key if matched_key else norm_k
+                        locations_by_state[target_key] = {
+                            "state_code": state.get("state_code", s_name),
+                            "state_name": s_name,
+                            "districts": state.get("districts", [])
+                        }
             except Exception as e:
-                logger.error(f"Failed to load locations cache: {e}")
+                print(f"Warning: Failed to load {DATA_FILE}: {e}")
 
-    def _save_cache(self):
-        try:
-            os.makedirs(os.path.dirname(CACHE_FILE), exist_ok=True)
-            with open(CACHE_FILE, "w", encoding="utf-8") as f:
-                json.dump(self._cache, f, indent=2, ensure_ascii=False)
-        except Exception as e:
-            logger.error(f"Failed to write locations cache: {e}")
+        # Sort states alphabetically by name
+        sorted_states = sorted(locations_by_state.values(), key=lambda s: s["state_name"])
+        return {"states": sorted_states}
+
+    def get_all(self) -> Dict[str, Any]:
+        """Return the complete state-district-complex tree."""
+        return self.load_data()
 
     def get_states(self) -> List[Dict[str, str]]:
-        """Return list of all Indian States and Union Territories with official eCourts codes."""
-        states = self._cache.get("states", [])
-        return sorted(states, key=lambda s: s.get("name", ""))
+        """Return sorted list of available states."""
+        all_data = self.get_all()
+        return [
+            {"state_code": s["state_code"], "state_name": s["state_name"], "code": s["state_code"], "name": s["state_name"]}
+            for s in all_data["states"]
+        ]
 
-    async def get_districts(self, state_code: str) -> List[Dict[str, str]]:
-        """Return districts for a given state code. Fetches live if not in cache."""
-        districts_map = self._cache.setdefault("districts", {})
-        if state_code in districts_map and districts_map[state_code]:
-            return districts_map[state_code]
-
-        # Fetch live from eCourts
-        logger.info(f"Districts for state {state_code} not cached. Fetching live from eCourts...")
-        try:
-            async with async_playwright() as p:
-                browser = await p.chromium.launch(headless=True)
-                page = await browser.new_page(
-                    user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36"
+    def get_districts(self, state_query: str) -> List[Dict[str, Any]]:
+        """Return districts for a given state (by name or code)."""
+        all_data = self.get_all()
+        norm_q = normalize_text(state_query)
+        for s in all_data["states"]:
+            if (
+                s["state_code"] == state_query
+                or normalize_text(s["state_name"]) == norm_q
+                or norm_q in normalize_text(s["state_name"])
+            ):
+                return sorted(
+                    [
+                        {
+                            "dist_code": d["dist_code"],
+                            "dist_name": d["dist_name"],
+                            "code": d["dist_code"],
+                            "name": d["dist_name"],
+                            "complex_count": len(d.get("complexes", []))
+                        }
+                        for d in s.get("districts", [])
+                    ],
+                    key=lambda d: d["dist_name"]
                 )
-                await page.goto("https://services.ecourts.gov.in/ecourtindia_v6/?p=courtorder%2Findex", wait_until="domcontentloaded", timeout=30000)
-                await page.select_option("select#sess_state_code", state_code)
-                await page.wait_for_function("() => document.querySelector('select#sess_dist_code').options.length > 1", timeout=12000)
-
-                districts = await page.evaluate("""() => {
-                    const sel = document.querySelector('select#sess_dist_code');
-                    if (!sel) return [];
-                    return Array.from(sel.options)
-                        .filter(o => o.value && o.value !== '0' && o.text.trim())
-                        .map(o => ({ code: o.value, name: o.text.trim() }));
-                }""")
-                await browser.close()
-
-                if districts:
-                    districts_map[state_code] = districts
-                    self._save_cache()
-                    logger.info(f"Cached {len(districts)} districts for state {state_code}.")
-                    return districts
-        except Exception as e:
-            logger.warning(f"Live district fetch failed for state {state_code}: {e}")
-
         return []
 
-    async def get_complexes(self, state_code: str, dist_code: str) -> List[Dict[str, str]]:
-        """Return court complexes for a given state & district. Fetches live if not in cache."""
-        complexes_map = self._cache.setdefault("complexes", {})
-        cache_key = f"{state_code}_{dist_code}"
+    def get_court_complexes(self, state_query: str, district_query: str) -> List[Dict[str, str]]:
+        """Return court complexes for a given state and district."""
+        all_data = self.get_all()
+        norm_s = normalize_text(state_query)
+        norm_d = normalize_text(district_query)
 
-        if cache_key in complexes_map and complexes_map[cache_key]:
-            return complexes_map[cache_key]
-
-        # Fetch live from eCourts
-        logger.info(f"Complexes for {cache_key} not cached. Fetching live from eCourts...")
-        try:
-            async with async_playwright() as p:
-                browser = await p.chromium.launch(headless=True)
-                page = await browser.new_page(
-                    user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36"
-                )
-                await page.goto("https://services.ecourts.gov.in/ecourtindia_v6/?p=courtorder%2Findex", wait_until="domcontentloaded", timeout=30000)
-                await page.select_option("select#sess_state_code", state_code)
-                await page.wait_for_function("() => document.querySelector('select#sess_dist_code').options.length > 1", timeout=12000)
-
-                await page.select_option("select#sess_dist_code", dist_code)
-                await page.wait_for_function("() => document.querySelector('select#court_complex_code').options.length > 1", timeout=12000)
-
-                complexes = await page.evaluate("""() => {
-                    const sel = document.querySelector('select#court_complex_code');
-                    if (!sel) return [];
-                    return Array.from(sel.options)
-                        .filter(o => o.value && o.value !== '0' && o.text.trim())
-                        .map(o => ({ code: o.value, name: o.text.trim() }));
-                }""")
-                await browser.close()
-
-                if complexes:
-                    complexes_map[cache_key] = complexes
-                    self._save_cache()
-                    logger.info(f"Cached {len(complexes)} complexes for {cache_key}.")
-                    return complexes
-        except Exception as e:
-            logger.warning(f"Live complex fetch failed for {cache_key}: {e}")
-
+        for s in all_data["states"]:
+            if (
+                s["state_code"] == state_query
+                or normalize_text(s["state_name"]) == norm_s
+                or norm_s in normalize_text(s["state_name"])
+            ):
+                for d in s.get("districts", []):
+                    if (
+                        d["dist_code"] == district_query
+                        or normalize_text(d["dist_name"]) == norm_d
+                        or norm_d in normalize_text(d["dist_name"])
+                    ):
+                        return sorted(
+                            [
+                                {
+                                    "complex_code": c["complex_code"],
+                                    "complex_name": c["complex_name"],
+                                    "code": c["complex_code"],
+                                    "name": c["complex_name"]
+                                }
+                                for c in d.get("complexes", [])
+                            ],
+                            key=lambda c: c["complex_name"]
+                        )
         return []
 
+    # Alias for backward compatibility
+    def get_complexes(self, state_code: str, dist_code: str) -> List[Dict[str, str]]:
+        return self.get_court_complexes(state_code, dist_code)
 
-# Singleton instance
+
 location_service = LocationService()

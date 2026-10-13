@@ -505,10 +505,10 @@ def match_option(user_input: str, available_options: List[Dict[str, str]]) -> Tu
             continue  # skip placeholder options like '-- Select State --'
         valid_options.append((opt, normalize_text(opt_text)))
 
-    # Step 1: Exact matches against user input or resolved alias
+    # Step 1: Exact matches against user input or resolved alias (or direct value code)
     exact_matches = [
         opt for opt, norm_opt in valid_options
-        if norm_user == norm_opt or (norm_alias and norm_alias == norm_opt)
+        if norm_user == norm_opt or (norm_alias and norm_alias == norm_opt) or user_input == opt.get("value")
     ]
     if len(exact_matches) == 1:
         return exact_matches[0]["value"], None
@@ -714,6 +714,11 @@ class ECourtsScraperService:
                 return
 
         await state_select_loc.select_option(value=matched_state_val)
+        await page.evaluate(f"""() => {{
+            const el = document.querySelector("select#sess_state_code, select[name*='state'], select#state_code");
+            if (el) el.dispatchEvent(new Event('change', {{ bubbles: true }}));
+            if (typeof window.fillDistrict === 'function') window.fillDistrict('{matched_state_val}');
+        }}""")
 
         # --- STEP 3: Select District ---
         await session_manager.update_status(
@@ -748,6 +753,11 @@ class ECourtsScraperService:
                 return
 
         await dist_select_loc.select_option(value=matched_dist_val)
+        await page.evaluate(f"""() => {{
+            const el = document.querySelector("select#sess_dist_code, select[name*='dist'], select#dist_code");
+            if (el) el.dispatchEvent(new Event('change', {{ bubbles: true }}));
+            if (typeof window.fillCourtComplex === 'function') window.fillCourtComplex('{matched_dist_val}');
+        }}""")
 
         # --- STEP 4: Select Court Complex ---
         await session_manager.update_status(
@@ -781,6 +791,10 @@ class ECourtsScraperService:
                 return
 
         await court_select_loc.select_option(value=matched_court_val)
+        await page.evaluate(f"""() => {{
+            const el = document.querySelector("select#court_complex_code, select[name*='court_complex'], select#complex_code");
+            if (el) el.dispatchEvent(new Event('change', {{ bubbles: true }}));
+        }}""")
         await page.wait_for_timeout(1500)
 
         # Dismiss modal if eCourts popped up validateError

@@ -4,12 +4,16 @@
 
 const SearchModule = (() => {
     // Form and input elements
+    // Form and input elements
     const searchForm = document.getElementById("orderDateSearchForm");
-    const stateInput = document.getElementById("stateInput");
-    const districtInput = document.getElementById("districtInput");
-    const courtComplexInput = document.getElementById("courtComplexInput");
+    const stateSelect = document.getElementById("stateSelect") || document.getElementById("stateInput");
+    const districtSelect = document.getElementById("districtSelect") || document.getElementById("districtInput");
+    const courtComplexSelect = document.getElementById("courtComplexSelect") || document.getElementById("courtComplexInput");
     const fromDateInput = document.getElementById("fromDateInput");
     const toDateInput = document.getElementById("toDateInput");
+
+    // Location directory cache
+    let locationsTree = [];
     
     // Captcha elements
     const captchaSection = document.getElementById("captchaSection");
@@ -37,6 +41,88 @@ const SearchModule = (() => {
     let activeSearchId = null;
     let pollInterval = null;
     let currentState = "READY"; // READY, SEARCHING, CAPTCHA_REQUIRED, RESULTS_FOUND, etc.
+
+    /**
+     * Fetch and initialize cached eCourts location directory.
+     */
+    async function initLocations() {
+        try {
+            stateSelect.innerHTML = '<option value="" selected disabled>Loading Official States...</option>';
+            const res = await fetch("/api/locations");
+            if (!res.ok) throw new Error("Failed to load locations");
+            const data = await res.json();
+            locationsTree = data.states || [];
+
+            // Populate States
+            stateSelect.innerHTML = '<option value="" selected disabled>-- Select State / UT --</option>';
+            locationsTree.forEach(s => {
+                const opt = document.createElement("option");
+                opt.value = s.state_name;
+                opt.textContent = s.state_name;
+                opt.dataset.stateCode = s.state_code;
+                stateSelect.appendChild(opt);
+            });
+
+            // Bind State change handler
+            stateSelect.addEventListener("change", () => {
+                stateSelect.classList.remove("is-invalid");
+                const selectedStateName = stateSelect.value;
+                const stateObj = locationsTree.find(s => s.state_name === selectedStateName);
+
+                districtSelect.innerHTML = '<option value="" selected disabled>-- Select District --</option>';
+                courtComplexSelect.innerHTML = '<option value="" selected disabled>Select District first</option>';
+                courtComplexSelect.disabled = true;
+
+                if (stateObj && stateObj.districts && stateObj.districts.length > 0) {
+                    stateObj.districts.forEach(d => {
+                        const opt = document.createElement("option");
+                        opt.value = d.dist_name;
+                        opt.textContent = d.dist_name;
+                        opt.dataset.distCode = d.dist_code;
+                        districtSelect.appendChild(opt);
+                    });
+                    districtSelect.disabled = false;
+                } else {
+                    districtSelect.innerHTML = '<option value="" selected disabled>No districts available</option>';
+                    districtSelect.disabled = true;
+                }
+            });
+
+            // Bind District change handler
+            districtSelect.addEventListener("change", () => {
+                districtSelect.classList.remove("is-invalid");
+                const selectedStateName = stateSelect.value;
+                const selectedDistName = districtSelect.value;
+
+                const stateObj = locationsTree.find(s => s.state_name === selectedStateName);
+                const distObj = stateObj ? stateObj.districts.find(d => d.dist_name === selectedDistName) : null;
+
+                courtComplexSelect.innerHTML = '<option value="" selected disabled>-- Select Court Complex --</option>';
+
+                if (distObj && distObj.complexes && distObj.complexes.length > 0) {
+                    distObj.complexes.forEach(c => {
+                        const opt = document.createElement("option");
+                        opt.value = c.complex_name;
+                        opt.textContent = c.complex_name;
+                        opt.dataset.complexCode = c.complex_code;
+                        courtComplexSelect.appendChild(opt);
+                    });
+                    courtComplexSelect.disabled = false;
+                } else {
+                    courtComplexSelect.innerHTML = '<option value="" selected disabled>No court complexes available</option>';
+                    courtComplexSelect.disabled = true;
+                }
+            });
+
+            courtComplexSelect.addEventListener("change", () => {
+                courtComplexSelect.classList.remove("is-invalid");
+            });
+
+        } catch (err) {
+            console.error("Location directory error:", err);
+            stateSelect.innerHTML = '<option value="" selected disabled>Error loading directory. Retry</option>';
+        }
+    }
 
     /**
      * Set and render distinct UI state.
@@ -183,9 +269,9 @@ const SearchModule = (() => {
     }
 
     function setFormDisabled(disabled) {
-        stateInput.disabled = disabled;
-        districtInput.disabled = disabled;
-        courtComplexInput.disabled = disabled;
+        stateSelect.disabled = disabled;
+        districtSelect.disabled = disabled || !stateSelect.value;
+        courtComplexSelect.disabled = disabled || !districtSelect.value;
         fromDateInput.disabled = disabled;
         toDateInput.disabled = disabled;
         document.querySelectorAll("input[name='order_type']").forEach(r => r.disabled = disabled);
@@ -199,29 +285,29 @@ const SearchModule = (() => {
         let valid = true;
 
         // Clean & trim location inputs
-        const stateVal = stateInput.value.trim();
-        const districtVal = districtInput.value.trim();
-        const courtComplexVal = courtComplexInput.value.trim();
+        const stateVal = (stateSelect.value || "").trim();
+        const districtVal = (districtSelect.value || "").trim();
+        const courtComplexVal = (courtComplexSelect.value || "").trim();
 
         if (!stateVal) {
-            stateInput.classList.add("is-invalid");
+            stateSelect.classList.add("is-invalid");
             valid = false;
         } else {
-            stateInput.classList.remove("is-invalid");
+            stateSelect.classList.remove("is-invalid");
         }
 
         if (!districtVal) {
-            districtInput.classList.add("is-invalid");
+            districtSelect.classList.add("is-invalid");
             valid = false;
         } else {
-            districtInput.classList.remove("is-invalid");
+            districtSelect.classList.remove("is-invalid");
         }
 
         if (!courtComplexVal) {
-            courtComplexInput.classList.add("is-invalid");
+            courtComplexSelect.classList.add("is-invalid");
             valid = false;
         } else {
-            courtComplexInput.classList.remove("is-invalid");
+            courtComplexSelect.classList.remove("is-invalid");
         }
 
         // Validate Date format DD-MM-YYYY
@@ -292,9 +378,9 @@ const SearchModule = (() => {
 
         // Read values (trimmed)
         const payload = {
-            state: stateInput.value.trim(),
-            district: districtInput.value.trim(),
-            court_complex: courtComplexInput.value.trim(),
+            state: stateSelect.value.trim(),
+            district: districtSelect.value.trim(),
+            court_complex: courtComplexSelect.value.trim(),
             order_date_criteria: {
                 from_date: fromDateInput.value.trim(),
                 to_date: toDateInput.value.trim(),
@@ -470,6 +556,13 @@ const SearchModule = (() => {
             activeSearchId = null;
         }
 
+        // Reset location dropdowns
+        stateSelect.value = "";
+        districtSelect.innerHTML = '<option value="" selected disabled>Select State first</option>';
+        districtSelect.disabled = true;
+        courtComplexSelect.innerHTML = '<option value="" selected disabled>Select District first</option>';
+        courtComplexSelect.disabled = true;
+
         // Reset inputs
         searchForm.reset();
         document.getElementById("orderTypeInterim").checked = true;
@@ -486,6 +579,7 @@ const SearchModule = (() => {
 
     return {
         init: () => {
+            initLocations();
             searchForm.addEventListener("submit", handleSearchSubmit);
             resetButton.addEventListener("click", handleReset);
             

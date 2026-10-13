@@ -67,43 +67,55 @@
                         <form id="orderDateSearchForm" novalidate>
                             
                             <!-- Location Section -->
-                            <div class="section-label mb-3">
-                                <i class="bi bi-geo-alt-fill text-primary me-1"></i>
-                                <span>Court Location (Type manually)</span>
+                            <!-- Location Section -->
+                            <div class="d-flex align-items-center justify-content-between mb-3 flex-wrap gap-2">
+                                <div class="section-label mb-0">
+                                    <i class="bi bi-geo-alt-fill text-primary me-2"></i>
+                                    <span>Court Location</span>
+                                </div>
+                                <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-2 py-1 small">
+                                    <i class="bi bi-diagram-3-fill me-1"></i>Official eCourts Directory
+                                </span>
                             </div>
 
                             <div class="row g-3 mb-4">
-                                <!-- State Text Input -->
+                                <!-- State Dropdown -->
                                 <div class="col-md-4">
-                                    <label for="stateInput" class="form-label required-field">State</label>
+                                    <label for="stateSelect" class="form-label required-field">State</label>
                                     <div class="input-group">
-                                        <span class="input-group-text bg-white border-end-0"><i class="bi bi-map text-muted"></i></span>
-                                        <input type="text" class="form-control border-start-0" id="stateInput" name="state" placeholder="Enter State Name" required autocomplete="off">
+                                        <span class="input-group-text bg-white border-end-0"><i class="bi bi-map text-primary"></i></span>
+                                        <select class="form-select border-start-0" id="stateSelect" name="state" required>
+                                            <option value="" selected disabled>Loading States...</option>
+                                        </select>
                                     </div>
-                                    <div class="invalid-feedback" id="stateFeedback">Please enter a valid State name.</div>
-                                    <div class="form-text small">e.g. Telangana, Andhra Pradesh, Delhi, Maharashtra, Karnataka</div>
+                                    <div class="invalid-feedback" id="stateFeedback">Please select a valid State.</div>
+                                    <div class="form-text small text-muted">Select from 36 Indian States &amp; UTs</div>
                                 </div>
 
-                                <!-- District Text Input -->
+                                <!-- District Dropdown -->
                                 <div class="col-md-4">
-                                    <label for="districtInput" class="form-label required-field">District</label>
+                                    <label for="districtSelect" class="form-label required-field">District</label>
                                     <div class="input-group">
-                                        <span class="input-group-text bg-white border-end-0"><i class="bi bi-buildings text-muted"></i></span>
-                                        <input type="text" class="form-control border-start-0" id="districtInput" name="district" placeholder="Enter District Name" required autocomplete="off">
+                                        <span class="input-group-text bg-white border-end-0"><i class="bi bi-buildings text-primary"></i></span>
+                                        <select class="form-select border-start-0" id="districtSelect" name="district" required disabled>
+                                            <option value="" selected disabled>Select State first</option>
+                                        </select>
                                     </div>
-                                    <div class="invalid-feedback" id="districtFeedback">Please enter a valid District name.</div>
-                                    <div class="form-text small">e.g. Hyderabad, Ranga Reddy, New Delhi, Mumbai, Bengaluru Urban</div>
+                                    <div class="invalid-feedback" id="districtFeedback">Please select a District.</div>
+                                    <div class="form-text small text-muted">Auto-filtered by selected State</div>
                                 </div>
 
-                                <!-- Court Complex Text Input -->
+                                <!-- Court Complex Dropdown -->
                                 <div class="col-md-4">
-                                    <label for="courtComplexInput" class="form-label required-field">Court Complex</label>
+                                    <label for="courtComplexSelect" class="form-label required-field">Court Complex</label>
                                     <div class="input-group">
-                                        <span class="input-group-text bg-white border-end-0"><i class="bi bi-bank text-muted"></i></span>
-                                        <input type="text" class="form-control border-start-0" id="courtComplexInput" name="court_complex" placeholder="Enter Court Complex Name" required autocomplete="off">
+                                        <span class="input-group-text bg-white border-end-0"><i class="bi bi-bank text-primary"></i></span>
+                                        <select class="form-select border-start-0" id="courtComplexSelect" name="court_complex" required disabled>
+                                            <option value="" selected disabled>Select District first</option>
+                                        </select>
                                     </div>
-                                    <div class="invalid-feedback" id="courtComplexFeedback">Please enter a valid Court Complex name.</div>
-                                    <div class="form-text small">e.g. Nampally Criminal Courts, Patiala House Courts, City Civil Court</div>
+                                    <div class="invalid-feedback" id="courtComplexFeedback">Please select a Court Complex.</div>
+                                    <div class="form-text small text-muted">Official complexes for chosen District</div>
                                 </div>
                             </div>
 

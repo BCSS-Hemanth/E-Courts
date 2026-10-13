@@ -23,6 +23,7 @@ from app.schemas import (
 )
 from app.services.session_manager import session_manager
 from app.services.ecourts_scraper import ecourts_scraper
+from app.services.location_service import location_service
 
 logger = logging.getLogger(__name__)
 
@@ -218,3 +219,32 @@ async def get_court_order_document(search_id: str, sl_no: str):
         status_code=status.HTTP_404_NOT_FOUND,
         detail=f"Court order document #{sl_no} not found for session '{search_id}'."
     )
+
+
+# ---------------------------------------------------------------------------
+# Location Directory Endpoints (Cached from eCourts)
+# ---------------------------------------------------------------------------
+
+@router.get("/locations")
+async def get_all_locations():
+    """Return all cached States, Districts, and Court Complexes."""
+    return location_service.get_all()
+
+
+@router.get("/locations/states")
+async def get_states():
+    """Return list of available Indian States & Union Territories."""
+    return location_service.get_states()
+
+
+@router.get("/locations/districts")
+async def get_districts(state: str):
+    """Return list of districts for a selected state."""
+    return location_service.get_districts(state)
+
+
+@router.get("/locations/complexes")
+async def get_court_complexes(state: str, district: str):
+    """Return list of court complexes for a selected district."""
+    return location_service.get_court_complexes(state, district)
+

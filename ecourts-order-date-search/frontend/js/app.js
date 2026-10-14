@@ -3,7 +3,7 @@
  * Initializes modules and interactive helpers (date pickers, audio captcha).
  */
 
-document.addEventListener("DOMContentLoaded", () => {
+function bootstrapApp() {
     // Initialize Search Module
     SearchModule.init();
 
@@ -15,9 +15,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const audioBtn = document.getElementById("captchaAudioBtn");
     if (audioBtn) {
         audioBtn.addEventListener("click", () => {
-            const captchaInput = document.getElementById("captchaInput");
             if ('speechSynthesis' in window) {
-                // If the user has typed or if there is a known placeholder
                 const textToSay = "Please enter the characters visible in the captcha box.";
                 const utterance = new SpeechSynthesisUtterance(textToSay);
                 utterance.rate = 0.9;
@@ -32,23 +30,27 @@ document.addEventListener("DOMContentLoaded", () => {
     const refreshBtn = document.getElementById("captchaRefreshBtn");
     if (refreshBtn) {
         refreshBtn.addEventListener("click", () => {
-            // Rotating icon animation
             const icon = refreshBtn.querySelector("i");
             if (icon) {
                 icon.classList.add("spin-animation");
                 setTimeout(() => icon.classList.remove("spin-animation"), 600);
             }
-            // Trigger a re-query if in CAPTCHA state
             const captchaInput = document.getElementById("captchaInput");
-            captchaInput.value = "";
-            captchaInput.focus();
+            if (captchaInput) {
+                captchaInput.value = "";
+                captchaInput.focus();
+            }
         });
     }
 
-    // Optional quick demonstration helper: fill with sample valid data
-    // State: Delhi, District: New Delhi, Court Complex: Patiala House Courts
     console.log("eCourts Order Date Search Frontend Initialized.");
-});
+}
+
+if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", bootstrapApp);
+} else {
+    bootstrapApp();
+}
 
 /**
  * Connect a text input (DD-MM-YYYY) with a native hidden datepicker (YYYY-MM-DD).

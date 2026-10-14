@@ -1999,6 +1999,42 @@
       ]
     },
     {
+      "state_code": "Dadra and Nagar Haveli and Daman and Diu",
+      "state_name": "Dadra and Nagar Haveli and Daman and Diu",
+      "districts": [
+        {
+          "dist_code": "Daman",
+          "dist_name": "Daman",
+          "complexes": [
+            {
+              "complex_code": "District and Sessions Court Daman",
+              "complex_name": "District and Sessions Court Daman"
+            }
+          ]
+        },
+        {
+          "dist_code": "Diu",
+          "dist_name": "Diu",
+          "complexes": [
+            {
+              "complex_code": "District Court Diu",
+              "complex_name": "District Court Diu"
+            }
+          ]
+        },
+        {
+          "dist_code": "Dadra and Nagar Haveli",
+          "dist_name": "Dadra and Nagar Haveli",
+          "complexes": [
+            {
+              "complex_code": "District and Sessions Court Silvassa",
+              "complex_name": "District and Sessions Court Silvassa"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "state_code": "26",
       "state_name": "Delhi",
       "districts": [
@@ -2523,6 +2559,974 @@
           "dist_code": "35",
           "dist_name": "West Karbi Anglong",
           "complexes": []
+        }
+      ]
+    },
+    {
+      "state_code": "Haryana",
+      "state_name": "Haryana",
+      "districts": [
+        {
+          "dist_code": "Gurugram",
+          "dist_name": "Gurugram",
+          "complexes": [
+            {
+              "complex_code": "District and Sessions Court Gurugram",
+              "complex_name": "District and Sessions Court Gurugram"
+            }
+          ]
+        },
+        {
+          "dist_code": "Faridabad",
+          "dist_name": "Faridabad",
+          "complexes": [
+            {
+              "complex_code": "District and Sessions Court Faridabad",
+              "complex_name": "District and Sessions Court Faridabad"
+            }
+          ]
+        },
+        {
+          "dist_code": "Panchkula",
+          "dist_name": "Panchkula",
+          "complexes": [
+            {
+              "complex_code": "District and Sessions Court Panchkula",
+              "complex_name": "District and Sessions Court Panchkula"
+            }
+          ]
+        },
+        {
+          "dist_code": "Ambala",
+          "dist_name": "Ambala",
+          "complexes": [
+            {
+              "complex_code": "District Court Ambala",
+              "complex_name": "District Court Ambala"
+            }
+          ]
+        },
+        {
+          "dist_code": "Karnal",
+          "dist_name": "Karnal",
+          "complexes": [
+            {
+              "complex_code": "District Court Karnal",
+              "complex_name": "District Court Karnal"
+            }
+          ]
+        },
+        {
+          "dist_code": "Sonipat",
+          "dist_name": "Sonipat",
+          "complexes": [
+            {
+              "complex_code": "District Court Sonipat",
+              "complex_name": "District Court Sonipat"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "state_code": "Himachal Pradesh",
+      "state_name": "Himachal Pradesh",
+      "districts": [
+        {
+          "dist_code": "Shimla",
+          "dist_name": "Shimla",
+          "complexes": [
+            {
+              "complex_code": "District and Sessions Court Shimla",
+              "complex_name": "District and Sessions Court Shimla"
+            }
+          ]
+        },
+        {
+          "dist_code": "Kangra",
+          "dist_name": "Kangra",
+          "complexes": [
+            {
+              "complex_code": "District Court Dharamshala",
+              "complex_name": "District Court Dharamshala"
+            }
+          ]
+        },
+        {
+          "dist_code": "Mandi",
+          "dist_name": "Mandi",
+          "complexes": [
+            {
+              "complex_code": "District Court Mandi",
+              "complex_name": "District Court Mandi"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "state_code": "Jammu and Kashmir",
+      "state_name": "Jammu and Kashmir",
+      "districts": [
+        {
+          "dist_code": "Srinagar",
+          "dist_name": "Srinagar",
+          "complexes": [
+            {
+              "complex_code": "District and Sessions Court Srinagar",
+              "complex_name": "District and Sessions Court Srinagar"
+            }
+          ]
+        },
+        {
+          "dist_code": "Jammu",
+          "dist_name": "Jammu",
+          "complexes": [
+            {
+              "complex_code": "District and Sessions Court Jammu",
+              "complex_name": "District and Sessions Court Jammu"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "state_code": "Jharkhand",
+      "state_name": "Jharkhand",
+      "districts": [
+        {
+          "dist_code": "Ranchi",
+          "dist_name": "Ranchi",
+          "complexes": [
+            {
+              "complex_code": "District and Sessions Court Ranchi",
+              "complex_name": "District and Sessions Court Ranchi"
+            }
+          ]
+        },
+        {
+          "dist_code": "East Singhbhum",
+          "dist_name": "East Singhbhum",
+          "complexes": [
+            {
+              "complex_code": "District Court Jamshedpur",
+              "complex_name": "District Court Jamshedpur"
+            }
+          ]
+        },
+        {
+          "dist_code": "Dhanbad",
+          "dist_name": "Dhanbad",
+          "complexes": [
+            {
+              "complex_code": "District Court Dhanbad",
+              "complex_name": "District Court Dhanbad"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "state_code": "Karnataka",
+      "state_name": "Karnataka",
+      "districts": [
+        {
+          "dist_code": "Bengaluru Urban",
+          "dist_name": "Bengaluru Urban",
+          "complexes": [
+            {
+              "complex_code": "City Civil and Sessions Court",
+              "complex_name": "City Civil and Sessions Court"
+            },
+            {
+              "complex_code": "Chief Metropolitan Magistrate Court Bengaluru",
+              "complex_name": "Chief Metropolitan Magistrate Court Bengaluru"
+            },
+            {
+              "complex_code": "Mayo Hall Court Complex",
+              "complex_name": "Mayo Hall Court Complex"
+            },
+            {
+              "complex_code": "Traffic Courts Complex Bengaluru",
+              "complex_name": "Traffic Courts Complex Bengaluru"
+            }
+          ]
+        },
+        {
+          "dist_code": "Bengaluru Rural",
+          "dist_name": "Bengaluru Rural",
+          "complexes": [
+            {
+              "complex_code": "District and Sessions Court Bengaluru Rural",
+              "complex_name": "District and Sessions Court Bengaluru Rural"
+            }
+          ]
+        },
+        {
+          "dist_code": "Mysuru",
+          "dist_name": "Mysuru",
+          "complexes": [
+            {
+              "complex_code": "District and Sessions Court Mysuru",
+              "complex_name": "District and Sessions Court Mysuru"
+            }
+          ]
+        },
+        {
+          "dist_code": "Belagavi",
+          "dist_name": "Belagavi",
+          "complexes": [
+            {
+              "complex_code": "District and Sessions Court Belagavi",
+              "complex_name": "District and Sessions Court Belagavi"
+            }
+          ]
+        },
+        {
+          "dist_code": "Dakshina Kannada",
+          "dist_name": "Dakshina Kannada",
+          "complexes": [
+            {
+              "complex_code": "District and Sessions Court Mangaluru",
+              "complex_name": "District and Sessions Court Mangaluru"
+            }
+          ]
+        },
+        {
+          "dist_code": "Dharwad",
+          "dist_name": "Dharwad",
+          "complexes": [
+            {
+              "complex_code": "District and Sessions Court Dharwad",
+              "complex_name": "District and Sessions Court Dharwad"
+            },
+            {
+              "complex_code": "Hubballi Court Complex",
+              "complex_name": "Hubballi Court Complex"
+            }
+          ]
+        },
+        {
+          "dist_code": "Kalaburagi",
+          "dist_name": "Kalaburagi",
+          "complexes": [
+            {
+              "complex_code": "District Court Kalaburagi",
+              "complex_name": "District Court Kalaburagi"
+            }
+          ]
+        },
+        {
+          "dist_code": "Tumakuru",
+          "dist_name": "Tumakuru",
+          "complexes": [
+            {
+              "complex_code": "District Court Tumakuru",
+              "complex_name": "District Court Tumakuru"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "state_code": "Kerala",
+      "state_name": "Kerala",
+      "districts": [
+        {
+          "dist_code": "Ernakulam",
+          "dist_name": "Ernakulam",
+          "complexes": [
+            {
+              "complex_code": "District and Sessions Court Ernakulam",
+              "complex_name": "District and Sessions Court Ernakulam"
+            },
+            {
+              "complex_code": "Kochi Court Complex",
+              "complex_name": "Kochi Court Complex"
+            },
+            {
+              "complex_code": "Aluva Court Complex",
+              "complex_name": "Aluva Court Complex"
+            }
+          ]
+        },
+        {
+          "dist_code": "Thiruvananthapuram",
+          "dist_name": "Thiruvananthapuram",
+          "complexes": [
+            {
+              "complex_code": "District and Sessions Court Vanchiyoor",
+              "complex_name": "District and Sessions Court Vanchiyoor"
+            },
+            {
+              "complex_code": "Neyyattinkara Court Complex",
+              "complex_name": "Neyyattinkara Court Complex"
+            }
+          ]
+        },
+        {
+          "dist_code": "Kozhikode",
+          "dist_name": "Kozhikode",
+          "complexes": [
+            {
+              "complex_code": "District and Sessions Court Kozhikode",
+              "complex_name": "District and Sessions Court Kozhikode"
+            }
+          ]
+        },
+        {
+          "dist_code": "Thrissur",
+          "dist_name": "Thrissur",
+          "complexes": [
+            {
+              "complex_code": "District and Sessions Court Thrissur",
+              "complex_name": "District and Sessions Court Thrissur"
+            }
+          ]
+        },
+        {
+          "dist_code": "Kollam",
+          "dist_name": "Kollam",
+          "complexes": [
+            {
+              "complex_code": "District Court Kollam",
+              "complex_name": "District Court Kollam"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "state_code": "Ladakh",
+      "state_name": "Ladakh",
+      "districts": [
+        {
+          "dist_code": "Leh",
+          "dist_name": "Leh",
+          "complexes": [
+            {
+              "complex_code": "District and Sessions Court Leh",
+              "complex_name": "District and Sessions Court Leh"
+            }
+          ]
+        },
+        {
+          "dist_code": "Kargil",
+          "dist_name": "Kargil",
+          "complexes": [
+            {
+              "complex_code": "District Court Kargil",
+              "complex_name": "District Court Kargil"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "state_code": "Lakshadweep",
+      "state_name": "Lakshadweep",
+      "districts": [
+        {
+          "dist_code": "Kavaratti",
+          "dist_name": "Kavaratti",
+          "complexes": [
+            {
+              "complex_code": "District and Sessions Court Kavaratti",
+              "complex_name": "District and Sessions Court Kavaratti"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "state_code": "Madhya Pradesh",
+      "state_name": "Madhya Pradesh",
+      "districts": [
+        {
+          "dist_code": "Bhopal",
+          "dist_name": "Bhopal",
+          "complexes": [
+            {
+              "complex_code": "District and Sessions Court Bhopal",
+              "complex_name": "District and Sessions Court Bhopal"
+            }
+          ]
+        },
+        {
+          "dist_code": "Indore",
+          "dist_name": "Indore",
+          "complexes": [
+            {
+              "complex_code": "District and Sessions Court Indore",
+              "complex_name": "District and Sessions Court Indore"
+            }
+          ]
+        },
+        {
+          "dist_code": "Jabalpur",
+          "dist_name": "Jabalpur",
+          "complexes": [
+            {
+              "complex_code": "District and Sessions Court Jabalpur",
+              "complex_name": "District and Sessions Court Jabalpur"
+            }
+          ]
+        },
+        {
+          "dist_code": "Gwalior",
+          "dist_name": "Gwalior",
+          "complexes": [
+            {
+              "complex_code": "District and Sessions Court Gwalior",
+              "complex_name": "District and Sessions Court Gwalior"
+            }
+          ]
+        },
+        {
+          "dist_code": "Ujjain",
+          "dist_name": "Ujjain",
+          "complexes": [
+            {
+              "complex_code": "District Court Ujjain",
+              "complex_name": "District Court Ujjain"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "state_code": "Maharashtra",
+      "state_name": "Maharashtra",
+      "districts": [
+        {
+          "dist_code": "Mumbai",
+          "dist_name": "Mumbai",
+          "complexes": [
+            {
+              "complex_code": "City Civil Court",
+              "complex_name": "City Civil Court"
+            },
+            {
+              "complex_code": "Chief Metropolitan Magistrate Court",
+              "complex_name": "Chief Metropolitan Magistrate Court"
+            },
+            {
+              "complex_code": "Sessions Court",
+              "complex_name": "Sessions Court"
+            },
+            {
+              "complex_code": "Esplanade Court Complex",
+              "complex_name": "Esplanade Court Complex"
+            },
+            {
+              "complex_code": "Bandra Court Complex",
+              "complex_name": "Bandra Court Complex"
+            },
+            {
+              "complex_code": "Mazgaon Court Complex",
+              "complex_name": "Mazgaon Court Complex"
+            },
+            {
+              "complex_code": "Girgaon Court Complex",
+              "complex_name": "Girgaon Court Complex"
+            }
+          ]
+        },
+        {
+          "dist_code": "Mumbai Suburban",
+          "dist_name": "Mumbai Suburban",
+          "complexes": [
+            {
+              "complex_code": "Bandra Court Complex",
+              "complex_name": "Bandra Court Complex"
+            },
+            {
+              "complex_code": "Andheri Court Complex",
+              "complex_name": "Andheri Court Complex"
+            },
+            {
+              "complex_code": "Borivali Court Complex",
+              "complex_name": "Borivali Court Complex"
+            },
+            {
+              "complex_code": "Dindoshi Court Complex",
+              "complex_name": "Dindoshi Court Complex"
+            }
+          ]
+        },
+        {
+          "dist_code": "Pune",
+          "dist_name": "Pune",
+          "complexes": [
+            {
+              "complex_code": "District and Sessions Court Pune",
+              "complex_name": "District and Sessions Court Pune"
+            },
+            {
+              "complex_code": "Shivajinagar Court",
+              "complex_name": "Shivajinagar Court"
+            },
+            {
+              "complex_code": "Cantonment Court Pune",
+              "complex_name": "Cantonment Court Pune"
+            }
+          ]
+        },
+        {
+          "dist_code": "Thane",
+          "dist_name": "Thane",
+          "complexes": [
+            {
+              "complex_code": "District and Sessions Court Thane",
+              "complex_name": "District and Sessions Court Thane"
+            },
+            {
+              "complex_code": "Kalyan Court Complex",
+              "complex_name": "Kalyan Court Complex"
+            },
+            {
+              "complex_code": "Belapur Court Complex",
+              "complex_name": "Belapur Court Complex"
+            },
+            {
+              "complex_code": "Ulhasnagar Court Complex",
+              "complex_name": "Ulhasnagar Court Complex"
+            }
+          ]
+        },
+        {
+          "dist_code": "Nagpur",
+          "dist_name": "Nagpur",
+          "complexes": [
+            {
+              "complex_code": "District and Sessions Court Nagpur",
+              "complex_name": "District and Sessions Court Nagpur"
+            }
+          ]
+        },
+        {
+          "dist_code": "Nashik",
+          "dist_name": "Nashik",
+          "complexes": [
+            {
+              "complex_code": "District and Sessions Court Nashik",
+              "complex_name": "District and Sessions Court Nashik"
+            },
+            {
+              "complex_code": "Malegaon Court Complex",
+              "complex_name": "Malegaon Court Complex"
+            }
+          ]
+        },
+        {
+          "dist_code": "Chhatrapati Sambhajinagar",
+          "dist_name": "Chhatrapati Sambhajinagar",
+          "complexes": [
+            {
+              "complex_code": "District and Sessions Court Aurangabad",
+              "complex_name": "District and Sessions Court Aurangabad"
+            }
+          ]
+        },
+        {
+          "dist_code": "Kolhapur",
+          "dist_name": "Kolhapur",
+          "complexes": [
+            {
+              "complex_code": "District Court Kolhapur",
+              "complex_name": "District Court Kolhapur"
+            }
+          ]
+        },
+        {
+          "dist_code": "Solapur",
+          "dist_name": "Solapur",
+          "complexes": [
+            {
+              "complex_code": "District Court Solapur",
+              "complex_name": "District Court Solapur"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "state_code": "Manipur",
+      "state_name": "Manipur",
+      "districts": [
+        {
+          "dist_code": "Imphal West",
+          "dist_name": "Imphal West",
+          "complexes": [
+            {
+              "complex_code": "District and Sessions Court Imphal West",
+              "complex_name": "District and Sessions Court Imphal West"
+            }
+          ]
+        },
+        {
+          "dist_code": "Imphal East",
+          "dist_name": "Imphal East",
+          "complexes": [
+            {
+              "complex_code": "District and Sessions Court Imphal East",
+              "complex_name": "District and Sessions Court Imphal East"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "state_code": "Meghalaya",
+      "state_name": "Meghalaya",
+      "districts": [
+        {
+          "dist_code": "East Khasi Hills",
+          "dist_name": "East Khasi Hills",
+          "complexes": [
+            {
+              "complex_code": "District and Sessions Court Shillong",
+              "complex_name": "District and Sessions Court Shillong"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "state_code": "Mizoram",
+      "state_name": "Mizoram",
+      "districts": [
+        {
+          "dist_code": "Aizawl",
+          "dist_name": "Aizawl",
+          "complexes": [
+            {
+              "complex_code": "District and Sessions Court Aizawl",
+              "complex_name": "District and Sessions Court Aizawl"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "state_code": "Nagaland",
+      "state_name": "Nagaland",
+      "districts": [
+        {
+          "dist_code": "Kohima",
+          "dist_name": "Kohima",
+          "complexes": [
+            {
+              "complex_code": "District Court Kohima",
+              "complex_name": "District Court Kohima"
+            }
+          ]
+        },
+        {
+          "dist_code": "Dimapur",
+          "dist_name": "Dimapur",
+          "complexes": [
+            {
+              "complex_code": "District Court Dimapur",
+              "complex_name": "District Court Dimapur"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "state_code": "Odisha",
+      "state_name": "Odisha",
+      "districts": [
+        {
+          "dist_code": "Khordha",
+          "dist_name": "Khordha",
+          "complexes": [
+            {
+              "complex_code": "District and Sessions Court Bhubaneswar",
+              "complex_name": "District and Sessions Court Bhubaneswar"
+            }
+          ]
+        },
+        {
+          "dist_code": "Cuttack",
+          "dist_name": "Cuttack",
+          "complexes": [
+            {
+              "complex_code": "District and Sessions Court Cuttack",
+              "complex_name": "District and Sessions Court Cuttack"
+            }
+          ]
+        },
+        {
+          "dist_code": "Ganjam",
+          "dist_name": "Ganjam",
+          "complexes": [
+            {
+              "complex_code": "District Court Berhampur",
+              "complex_name": "District Court Berhampur"
+            }
+          ]
+        },
+        {
+          "dist_code": "Sambalpur",
+          "dist_name": "Sambalpur",
+          "complexes": [
+            {
+              "complex_code": "District Court Sambalpur",
+              "complex_name": "District Court Sambalpur"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "state_code": "Puducherry",
+      "state_name": "Puducherry",
+      "districts": [
+        {
+          "dist_code": "Puducherry",
+          "dist_name": "Puducherry",
+          "complexes": [
+            {
+              "complex_code": "Integrated Court Complex Puducherry",
+              "complex_name": "Integrated Court Complex Puducherry"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "state_code": "Punjab",
+      "state_name": "Punjab",
+      "districts": [
+        {
+          "dist_code": "Ludhiana",
+          "dist_name": "Ludhiana",
+          "complexes": [
+            {
+              "complex_code": "District and Sessions Court Ludhiana",
+              "complex_name": "District and Sessions Court Ludhiana"
+            }
+          ]
+        },
+        {
+          "dist_code": "Amritsar",
+          "dist_name": "Amritsar",
+          "complexes": [
+            {
+              "complex_code": "District and Sessions Court Amritsar",
+              "complex_name": "District and Sessions Court Amritsar"
+            }
+          ]
+        },
+        {
+          "dist_code": "Jalandhar",
+          "dist_name": "Jalandhar",
+          "complexes": [
+            {
+              "complex_code": "District and Sessions Court Jalandhar",
+              "complex_name": "District and Sessions Court Jalandhar"
+            }
+          ]
+        },
+        {
+          "dist_code": "Patiala",
+          "dist_name": "Patiala",
+          "complexes": [
+            {
+              "complex_code": "District Court Patiala",
+              "complex_name": "District Court Patiala"
+            }
+          ]
+        },
+        {
+          "dist_code": "SAS Nagar Mohali",
+          "dist_name": "SAS Nagar Mohali",
+          "complexes": [
+            {
+              "complex_code": "District Court Mohali",
+              "complex_name": "District Court Mohali"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "state_code": "Rajasthan",
+      "state_name": "Rajasthan",
+      "districts": [
+        {
+          "dist_code": "Jaipur",
+          "dist_name": "Jaipur",
+          "complexes": [
+            {
+              "complex_code": "District and Sessions Court Jaipur Metropolitan",
+              "complex_name": "District and Sessions Court Jaipur Metropolitan"
+            },
+            {
+              "complex_code": "District Court Jaipur Rural",
+              "complex_name": "District Court Jaipur Rural"
+            }
+          ]
+        },
+        {
+          "dist_code": "Jodhpur",
+          "dist_name": "Jodhpur",
+          "complexes": [
+            {
+              "complex_code": "District and Sessions Court Jodhpur Metropolitan",
+              "complex_name": "District and Sessions Court Jodhpur Metropolitan"
+            }
+          ]
+        },
+        {
+          "dist_code": "Udaipur",
+          "dist_name": "Udaipur",
+          "complexes": [
+            {
+              "complex_code": "District Court Udaipur",
+              "complex_name": "District Court Udaipur"
+            }
+          ]
+        },
+        {
+          "dist_code": "Kota",
+          "dist_name": "Kota",
+          "complexes": [
+            {
+              "complex_code": "District Court Kota",
+              "complex_name": "District Court Kota"
+            }
+          ]
+        },
+        {
+          "dist_code": "Ajmer",
+          "dist_name": "Ajmer",
+          "complexes": [
+            {
+              "complex_code": "District Court Ajmer",
+              "complex_name": "District Court Ajmer"
+            }
+          ]
+        },
+        {
+          "dist_code": "Bikaner",
+          "dist_name": "Bikaner",
+          "complexes": [
+            {
+              "complex_code": "District Court Bikaner",
+              "complex_name": "District Court Bikaner"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "state_code": "Sikkim",
+      "state_name": "Sikkim",
+      "districts": [
+        {
+          "dist_code": "East Sikkim",
+          "dist_name": "East Sikkim",
+          "complexes": [
+            {
+              "complex_code": "District and Sessions Court Gangtok",
+              "complex_name": "District and Sessions Court Gangtok"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "state_code": "Tamil Nadu",
+      "state_name": "Tamil Nadu",
+      "districts": [
+        {
+          "dist_code": "Chennai",
+          "dist_name": "Chennai",
+          "complexes": [
+            {
+              "complex_code": "City Civil Court Chennai",
+              "complex_name": "City Civil Court Chennai"
+            },
+            {
+              "complex_code": "Metropolitan Magistrate Court Egmore",
+              "complex_name": "Metropolitan Magistrate Court Egmore"
+            },
+            {
+              "complex_code": "George Town Court Complex",
+              "complex_name": "George Town Court Complex"
+            },
+            {
+              "complex_code": "Saidapet Court Complex",
+              "complex_name": "Saidapet Court Complex"
+            }
+          ]
+        },
+        {
+          "dist_code": "Coimbatore",
+          "dist_name": "Coimbatore",
+          "complexes": [
+            {
+              "complex_code": "District Court Coimbatore",
+              "complex_name": "District Court Coimbatore"
+            },
+            {
+              "complex_code": "Pollachi Court Complex",
+              "complex_name": "Pollachi Court Complex"
+            }
+          ]
+        },
+        {
+          "dist_code": "Madurai",
+          "dist_name": "Madurai",
+          "complexes": [
+            {
+              "complex_code": "District Court Madurai",
+              "complex_name": "District Court Madurai"
+            }
+          ]
+        },
+        {
+          "dist_code": "Tiruchirappalli",
+          "dist_name": "Tiruchirappalli",
+          "complexes": [
+            {
+              "complex_code": "District Court Tiruchirappalli",
+              "complex_name": "District Court Tiruchirappalli"
+            }
+          ]
+        },
+        {
+          "dist_code": "Salem",
+          "dist_name": "Salem",
+          "complexes": [
+            {
+              "complex_code": "District Court Salem",
+              "complex_name": "District Court Salem"
+            }
+          ]
+        },
+        {
+          "dist_code": "Tirunelveli",
+          "dist_name": "Tirunelveli",
+          "complexes": [
+            {
+              "complex_code": "District Court Tirunelveli",
+              "complex_name": "District Court Tirunelveli"
+            }
+          ]
+        },
+        {
+          "dist_code": "Kancheepuram",
+          "dist_name": "Kancheepuram",
+          "complexes": [
+            {
+              "complex_code": "District Court Chengalpattu",
+              "complex_name": "District Court Chengalpattu"
+            }
+          ]
         }
       ]
     },
@@ -3085,6 +4089,290 @@
             {
               "complex_code": "1290204@4@N",
               "complex_name": "Thorrur, JCJ Court Complex"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "state_code": "Tripura",
+      "state_name": "Tripura",
+      "districts": [
+        {
+          "dist_code": "West Tripura",
+          "dist_name": "West Tripura",
+          "complexes": [
+            {
+              "complex_code": "District and Sessions Court Agartala",
+              "complex_name": "District and Sessions Court Agartala"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "state_code": "Uttar Pradesh",
+      "state_name": "Uttar Pradesh",
+      "districts": [
+        {
+          "dist_code": "Lucknow",
+          "dist_name": "Lucknow",
+          "complexes": [
+            {
+              "complex_code": "District Court Lucknow",
+              "complex_name": "District Court Lucknow"
+            },
+            {
+              "complex_code": "Kaiserbagh Court Complex",
+              "complex_name": "Kaiserbagh Court Complex"
+            }
+          ]
+        },
+        {
+          "dist_code": "Gautam Buddha Nagar",
+          "dist_name": "Gautam Buddha Nagar",
+          "complexes": [
+            {
+              "complex_code": "District Court Noida",
+              "complex_name": "District Court Noida"
+            },
+            {
+              "complex_code": "Surajpur Court Complex Greater Noida",
+              "complex_name": "Surajpur Court Complex Greater Noida"
+            }
+          ]
+        },
+        {
+          "dist_code": "Ghaziabad",
+          "dist_name": "Ghaziabad",
+          "complexes": [
+            {
+              "complex_code": "District Court Ghaziabad",
+              "complex_name": "District Court Ghaziabad"
+            }
+          ]
+        },
+        {
+          "dist_code": "Kanpur Nagar",
+          "dist_name": "Kanpur Nagar",
+          "complexes": [
+            {
+              "complex_code": "District Court Kanpur",
+              "complex_name": "District Court Kanpur"
+            }
+          ]
+        },
+        {
+          "dist_code": "Varanasi",
+          "dist_name": "Varanasi",
+          "complexes": [
+            {
+              "complex_code": "District Court Varanasi",
+              "complex_name": "District Court Varanasi"
+            }
+          ]
+        },
+        {
+          "dist_code": "Prayagraj",
+          "dist_name": "Prayagraj",
+          "complexes": [
+            {
+              "complex_code": "District Court Prayagraj",
+              "complex_name": "District Court Prayagraj"
+            }
+          ]
+        },
+        {
+          "dist_code": "Agra",
+          "dist_name": "Agra",
+          "complexes": [
+            {
+              "complex_code": "District Court Agra",
+              "complex_name": "District Court Agra"
+            }
+          ]
+        },
+        {
+          "dist_code": "Meerut",
+          "dist_name": "Meerut",
+          "complexes": [
+            {
+              "complex_code": "District Court Meerut",
+              "complex_name": "District Court Meerut"
+            }
+          ]
+        },
+        {
+          "dist_code": "Bareilly",
+          "dist_name": "Bareilly",
+          "complexes": [
+            {
+              "complex_code": "District Court Bareilly",
+              "complex_name": "District Court Bareilly"
+            }
+          ]
+        },
+        {
+          "dist_code": "Aligarh",
+          "dist_name": "Aligarh",
+          "complexes": [
+            {
+              "complex_code": "District Court Aligarh",
+              "complex_name": "District Court Aligarh"
+            }
+          ]
+        },
+        {
+          "dist_code": "Moradabad",
+          "dist_name": "Moradabad",
+          "complexes": [
+            {
+              "complex_code": "District Court Moradabad",
+              "complex_name": "District Court Moradabad"
+            }
+          ]
+        },
+        {
+          "dist_code": "Gorakhpur",
+          "dist_name": "Gorakhpur",
+          "complexes": [
+            {
+              "complex_code": "District Court Gorakhpur",
+              "complex_name": "District Court Gorakhpur"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "state_code": "Uttarakhand",
+      "state_name": "Uttarakhand",
+      "districts": [
+        {
+          "dist_code": "Dehradun",
+          "dist_name": "Dehradun",
+          "complexes": [
+            {
+              "complex_code": "District and Sessions Court Dehradun",
+              "complex_name": "District and Sessions Court Dehradun"
+            }
+          ]
+        },
+        {
+          "dist_code": "Haridwar",
+          "dist_name": "Haridwar",
+          "complexes": [
+            {
+              "complex_code": "District Court Haridwar",
+              "complex_name": "District Court Haridwar"
+            },
+            {
+              "complex_code": "Roorkee Court Complex",
+              "complex_name": "Roorkee Court Complex"
+            }
+          ]
+        },
+        {
+          "dist_code": "Nainital",
+          "dist_name": "Nainital",
+          "complexes": [
+            {
+              "complex_code": "District Court Nainital",
+              "complex_name": "District Court Nainital"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "state_code": "West Bengal",
+      "state_name": "West Bengal",
+      "districts": [
+        {
+          "dist_code": "Kolkata",
+          "dist_name": "Kolkata",
+          "complexes": [
+            {
+              "complex_code": "City Civil Court Kolkata",
+              "complex_name": "City Civil Court Kolkata"
+            },
+            {
+              "complex_code": "City Sessions Court Kolkata",
+              "complex_name": "City Sessions Court Kolkata"
+            },
+            {
+              "complex_code": "Chief Metropolitan Magistrate Court Bankshall Court",
+              "complex_name": "Chief Metropolitan Magistrate Court Bankshall Court"
+            },
+            {
+              "complex_code": "Alipore Judges Court",
+              "complex_name": "Alipore Judges Court"
+            },
+            {
+              "complex_code": "Sealdah Court Complex",
+              "complex_name": "Sealdah Court Complex"
+            }
+          ]
+        },
+        {
+          "dist_code": "North 24 Parganas",
+          "dist_name": "North 24 Parganas",
+          "complexes": [
+            {
+              "complex_code": "District Court Barasat",
+              "complex_name": "District Court Barasat"
+            },
+            {
+              "complex_code": "Bidhannagar Court Complex",
+              "complex_name": "Bidhannagar Court Complex"
+            },
+            {
+              "complex_code": "Barrackpore Court Complex",
+              "complex_name": "Barrackpore Court Complex"
+            }
+          ]
+        },
+        {
+          "dist_code": "South 24 Parganas",
+          "dist_name": "South 24 Parganas",
+          "complexes": [
+            {
+              "complex_code": "District Court Alipore",
+              "complex_name": "District Court Alipore"
+            }
+          ]
+        },
+        {
+          "dist_code": "Howrah",
+          "dist_name": "Howrah",
+          "complexes": [
+            {
+              "complex_code": "District Court Howrah",
+              "complex_name": "District Court Howrah"
+            }
+          ]
+        },
+        {
+          "dist_code": "Darjeeling",
+          "dist_name": "Darjeeling",
+          "complexes": [
+            {
+              "complex_code": "District Court Darjeeling",
+              "complex_name": "District Court Darjeeling"
+            },
+            {
+              "complex_code": "Siliguri Court Complex",
+              "complex_name": "Siliguri Court Complex"
+            }
+          ]
+        },
+        {
+          "dist_code": "Paschim Bardhaman",
+          "dist_name": "Paschim Bardhaman",
+          "complexes": [
+            {
+              "complex_code": "District Court Asansol",
+              "complex_name": "District Court Asansol"
             }
           ]
         }

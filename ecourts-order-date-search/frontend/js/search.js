@@ -43,25 +43,27 @@ const SearchModule = (() => {
     let currentState = "READY"; // READY, SEARCHING, CAPTCHA_REQUIRED, RESULTS_FOUND, etc.
 
     /**
-     * Fetch and initialize cached eCourts location directory.
+     * Initialize location directory directly from local in-memory dataset
+     * (window.ECOURTS_LOCATIONS) without requiring network API roundtrips.
      */
-    async function initLocations() {
+    function initLocations() {
         try {
-            stateSelect.innerHTML = '<option value="" selected disabled>Loading Official States...</option>';
-            const res = await fetch("/api/locations");
-            if (!res.ok) throw new Error("Failed to load locations");
-            const data = await res.json();
-            locationsTree = data.states || [];
+            // Load from local in-memory cache if available
+            if (window.ECOURTS_LOCATIONS && window.ECOURTS_LOCATIONS.states && window.ECOURTS_LOCATIONS.states.length > 0) {
+                locationsTree = window.ECOURTS_LOCATIONS.states;
+            }
 
-            // Populate States
-            stateSelect.innerHTML = '<option value="" selected disabled>-- Select State / UT --</option>';
-            locationsTree.forEach(s => {
-                const opt = document.createElement("option");
-                opt.value = s.state_name;
-                opt.textContent = s.state_name;
-                opt.dataset.stateCode = s.state_code;
-                stateSelect.appendChild(opt);
-            });
+            // Only populate state dropdown if options are not already present in HTML
+            if (stateSelect && (stateSelect.options.length <= 1 || stateSelect.options[0].disabled && stateSelect.options.length === 1)) {
+                stateSelect.innerHTML = '<option value="" selected disabled>-- Select State / UT --</option>';
+                locationsTree.forEach(s => {
+                    const opt = document.createElement("option");
+                    opt.value = s.state_name;
+                    opt.textContent = s.state_name;
+                    opt.dataset.stateCode = s.state_code;
+                    stateSelect.appendChild(opt);
+                });
+            }
 
             // Bind State change handler
             stateSelect.addEventListener("change", () => {
@@ -118,9 +120,28 @@ const SearchModule = (() => {
                 courtComplexSelect.classList.remove("is-invalid");
             });
 
+            // If local cache was empty, fallback asynchronously to /api/locations
+            if (locationsTree.length === 0) {
+                fetch("/api/locations")
+                    .then(r => r.json())
+                    .then(data => {
+                        locationsTree = data.states || [];
+                        if (locationsTree.length > 0 && (stateSelect.options.length <= 1 || stateSelect.options[0].disabled && stateSelect.options.length === 1)) {
+                            stateSelect.innerHTML = '<option value="" selected disabled>-- Select State / UT --</option>';
+                            locationsTree.forEach(s => {
+                                const opt = document.createElement("option");
+                                opt.value = s.state_name;
+                                opt.textContent = s.state_name;
+                                opt.dataset.stateCode = s.state_code;
+                                stateSelect.appendChild(opt);
+                            });
+                        }
+                    })
+                    .catch(e => console.warn("Fallback location fetch warning:", e));
+            }
+
         } catch (err) {
             console.error("Location directory error:", err);
-            stateSelect.innerHTML = '<option value="" selected disabled>Error loading directory. Retry</option>';
         }
     }
 
@@ -388,12 +409,6 @@ const SearchModule = (() => {
             district_code: distOpt ? (distOpt.dataset.distCode || null) : null,
             court_complex: courtComplexSelect.value.trim(),
             court_complex_code: complexOpt ? (complexOpt.dataset.complexCode || null) : null,
-            order_date_criteria: {
-                from_date: fromDateInput.value.trim(),
-                to_date: toDateInput.value.trim(),
-                order_type: document.querySelector("input[name='order_type']:checked").value
-            }
-        };
             order_date_criteria: {
                 from_date: fromDateInput.value.trim(),
                 to_date: toDateInput.value.trim(),

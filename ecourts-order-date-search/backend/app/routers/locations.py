@@ -9,6 +9,13 @@ from app.services.location_service import location_service
 router = APIRouter(prefix="/api/locations", tags=["Locations"])
 
 
+@router.get("")
+@router.get("/")
+async def get_all_locations():
+    """Return all cached States, Districts, and Court Complexes directly from local data file."""
+    return location_service.get_all()
+
+
 @router.get("/states")
 async def get_states() -> List[Dict[str, str]]:
     """Return all available States and Union Territories with official eCourts codes."""

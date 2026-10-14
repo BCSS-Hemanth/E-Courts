@@ -8,7 +8,7 @@ import json
 from pathlib import Path
 from typing import List, Dict, Any, Optional
 
-from app.services.ecourts_scraper import MOCK_LOCATION_DB, normalize_text
+from app.services.ecourts_scraper import MOCK_LOCATION_DB, normalize_text, canonical_key
 
 DATA_FILE = Path(__file__).resolve().parent.parent / "data" / "ecourts_locations.json"
 CACHE_FILE = Path(__file__).resolve().parent.parent / "data" / "locations_cache.json"
@@ -48,9 +48,15 @@ class LocationService:
                         if not s_name:
                             continue
                         norm_k = normalize_text(s_name)
+                        canon_k = canonical_key(s_name)
+                        # Find existing matching key (exact, alias, or substring)
                         matched_key = None
                         for k in list(locations_by_state.keys()):
-                            if k == norm_k or (len(k) > 4 and (k in norm_k or norm_k in k)):
+                            if (
+                                k == norm_k
+                                or canonical_key(k) == canon_k
+                                or (len(k) > 4 and (k in norm_k or norm_k in k))
+                            ):
                                 matched_key = k
                                 break
                         
@@ -83,10 +89,12 @@ class LocationService:
         """Return districts for a given state (by name or code)."""
         all_data = self.get_all()
         norm_q = normalize_text(state_query)
+        canon_q = canonical_key(state_query)
         for s in all_data["states"]:
             if (
                 s["state_code"] == state_query
                 or normalize_text(s["state_name"]) == norm_q
+                or canonical_key(s["state_name"]) == canon_q
                 or norm_q in normalize_text(s["state_name"])
             ):
                 return sorted(
@@ -108,18 +116,22 @@ class LocationService:
         """Return court complexes for a given state and district."""
         all_data = self.get_all()
         norm_s = normalize_text(state_query)
+        canon_s = canonical_key(state_query)
         norm_d = normalize_text(district_query)
+        canon_d = canonical_key(district_query)
 
         for s in all_data["states"]:
             if (
                 s["state_code"] == state_query
                 or normalize_text(s["state_name"]) == norm_s
+                or canonical_key(s["state_name"]) == canon_s
                 or norm_s in normalize_text(s["state_name"])
             ):
                 for d in s.get("districts", []):
                     if (
                         d["dist_code"] == district_query
                         or normalize_text(d["dist_name"]) == norm_d
+                        or canonical_key(d["dist_name"]) == canon_d
                         or norm_d in normalize_text(d["dist_name"])
                     ):
                         return sorted(

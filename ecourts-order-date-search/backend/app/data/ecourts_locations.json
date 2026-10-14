@@ -2525,6 +2525,570 @@
           "complexes": []
         }
       ]
+    },
+    {
+      "state_code": "29",
+      "state_name": "Telangana",
+      "districts": [
+        {
+          "dist_code": "1",
+          "dist_name": "Adilabad",
+          "complexes": [
+            {
+              "complex_code": "1290005@1,2,3,4,5@N",
+              "complex_name": "Adilabad, PDJ Court Complex"
+            },
+            {
+              "complex_code": "1290009@21@N",
+              "complex_name": "Utnoor, JCJ Court Complex"
+            },
+            {
+              "complex_code": "1290014@14@N",
+              "complex_name": "Boath, JCJ Court Complex"
+            }
+          ]
+        },
+        {
+          "dist_code": "13",
+          "dist_name": "Bhadradri Kothagudem",
+          "complexes": [
+            {
+              "complex_code": "1290005@1,2,3,4,5@N",
+              "complex_name": "Adilabad, PDJ Court Complex"
+            },
+            {
+              "complex_code": "1290009@21@N",
+              "complex_name": "Utnoor, JCJ Court Complex"
+            },
+            {
+              "complex_code": "1290014@14@N",
+              "complex_name": "Boath, JCJ Court Complex"
+            }
+          ]
+        },
+        {
+          "dist_code": "14",
+          "dist_name": "Hanumakonda",
+          "complexes": [
+            {
+              "complex_code": "1290005@1,2,3,4,5@N",
+              "complex_name": "Adilabad, PDJ Court Complex"
+            },
+            {
+              "complex_code": "1290009@21@N",
+              "complex_name": "Utnoor, JCJ Court Complex"
+            },
+            {
+              "complex_code": "1290014@14@N",
+              "complex_name": "Boath, JCJ Court Complex"
+            }
+          ]
+        },
+        {
+          "dist_code": "2",
+          "dist_name": "Hyderabad CCC",
+          "complexes": [
+            {
+              "complex_code": "1290005@1,2,3,4,5@N",
+              "complex_name": "Adilabad, PDJ Court Complex"
+            },
+            {
+              "complex_code": "1290009@21@N",
+              "complex_name": "Utnoor, JCJ Court Complex"
+            },
+            {
+              "complex_code": "1290014@14@N",
+              "complex_name": "Boath, JCJ Court Complex"
+            }
+          ]
+        },
+        {
+          "dist_code": "15",
+          "dist_name": "Jagitial",
+          "complexes": [
+            {
+              "complex_code": "1290005@1,2,3,4,5@N",
+              "complex_name": "Adilabad, PDJ Court Complex"
+            },
+            {
+              "complex_code": "1290009@21@N",
+              "complex_name": "Utnoor, JCJ Court Complex"
+            },
+            {
+              "complex_code": "1290014@14@N",
+              "complex_name": "Boath, JCJ Court Complex"
+            }
+          ]
+        },
+        {
+          "dist_code": "16",
+          "dist_name": "Jangoan",
+          "complexes": [
+            {
+              "complex_code": "1290142@1,2,3@N",
+              "complex_name": "Kothagudem, PDJ Court Complex"
+            },
+            {
+              "complex_code": "1290177@5@N",
+              "complex_name": "Yellandu, PJCJ Court Complex"
+            },
+            {
+              "complex_code": "1290186@6@N",
+              "complex_name": "Bhadrachalam, JCJ Court Complex"
+            },
+            {
+              "complex_code": "1290187@7@N",
+              "complex_name": "Manuguru, JCJ Court Complex"
+            },
+            {
+              "complex_code": "1290230@4@N",
+              "complex_name": "Dammapeta, JCJ Court Complex"
+            }
+          ]
+        },
+        {
+          "dist_code": "17",
+          "dist_name": "Jayashankar Bhupalapally",
+          "complexes": [
+            {
+              "complex_code": "1290142@1,2,3@N",
+              "complex_name": "Kothagudem, PDJ Court Complex"
+            },
+            {
+              "complex_code": "1290177@5@N",
+              "complex_name": "Yellandu, PJCJ Court Complex"
+            },
+            {
+              "complex_code": "1290186@6@N",
+              "complex_name": "Bhadrachalam, JCJ Court Complex"
+            },
+            {
+              "complex_code": "1290187@7@N",
+              "complex_name": "Manuguru, JCJ Court Complex"
+            },
+            {
+              "complex_code": "1290230@4@N",
+              "complex_name": "Dammapeta, JCJ Court Complex"
+            }
+          ]
+        },
+        {
+          "dist_code": "18",
+          "dist_name": "Jogulamba Gadwal",
+          "complexes": [
+            {
+              "complex_code": "1290142@1,2,3@N",
+              "complex_name": "Kothagudem, PDJ Court Complex"
+            },
+            {
+              "complex_code": "1290177@5@N",
+              "complex_name": "Yellandu, PJCJ Court Complex"
+            },
+            {
+              "complex_code": "1290186@6@N",
+              "complex_name": "Bhadrachalam, JCJ Court Complex"
+            },
+            {
+              "complex_code": "1290187@7@N",
+              "complex_name": "Manuguru, JCJ Court Complex"
+            },
+            {
+              "complex_code": "1290230@4@N",
+              "complex_name": "Dammapeta, JCJ Court Complex"
+            }
+          ]
+        },
+        {
+          "dist_code": "19",
+          "dist_name": "Kamareddy",
+          "complexes": [
+            {
+              "complex_code": "1290142@1,2,3@N",
+              "complex_name": "Kothagudem, PDJ Court Complex"
+            },
+            {
+              "complex_code": "1290177@5@N",
+              "complex_name": "Yellandu, PJCJ Court Complex"
+            },
+            {
+              "complex_code": "1290186@6@N",
+              "complex_name": "Bhadrachalam, JCJ Court Complex"
+            },
+            {
+              "complex_code": "1290187@7@N",
+              "complex_name": "Manuguru, JCJ Court Complex"
+            },
+            {
+              "complex_code": "1290230@4@N",
+              "complex_name": "Dammapeta, JCJ Court Complex"
+            }
+          ]
+        },
+        {
+          "dist_code": "3",
+          "dist_name": "Karimnagar",
+          "complexes": [
+            {
+              "complex_code": "1290142@1,2,3@N",
+              "complex_name": "Kothagudem, PDJ Court Complex"
+            },
+            {
+              "complex_code": "1290177@5@N",
+              "complex_name": "Yellandu, PJCJ Court Complex"
+            },
+            {
+              "complex_code": "1290186@6@N",
+              "complex_name": "Bhadrachalam, JCJ Court Complex"
+            },
+            {
+              "complex_code": "1290187@7@N",
+              "complex_name": "Manuguru, JCJ Court Complex"
+            },
+            {
+              "complex_code": "1290230@4@N",
+              "complex_name": "Dammapeta, JCJ Court Complex"
+            }
+          ]
+        },
+        {
+          "dist_code": "4",
+          "dist_name": "Khammam",
+          "complexes": [
+            {
+              "complex_code": "1290142@1,2,3@N",
+              "complex_name": "Kothagudem, PDJ Court Complex"
+            },
+            {
+              "complex_code": "1290177@5@N",
+              "complex_name": "Yellandu, PJCJ Court Complex"
+            },
+            {
+              "complex_code": "1290186@6@N",
+              "complex_name": "Bhadrachalam, JCJ Court Complex"
+            },
+            {
+              "complex_code": "1290187@7@N",
+              "complex_name": "Manuguru, JCJ Court Complex"
+            },
+            {
+              "complex_code": "1290230@4@N",
+              "complex_name": "Dammapeta, JCJ Court Complex"
+            }
+          ]
+        },
+        {
+          "dist_code": "20",
+          "dist_name": "Kumuram Bheem Asifabad",
+          "complexes": [
+            {
+              "complex_code": "1290144@1,2,3@N",
+              "complex_name": "JS Bhupalapally, PDJ Court Complex"
+            }
+          ]
+        },
+        {
+          "dist_code": "21",
+          "dist_name": "Mahabubabad",
+          "complexes": [
+            {
+              "complex_code": "1290144@1,2,3@N",
+              "complex_name": "JS Bhupalapally, PDJ Court Complex"
+            }
+          ]
+        },
+        {
+          "dist_code": "5",
+          "dist_name": "Mahabubnagar",
+          "complexes": [
+            {
+              "complex_code": "1290144@1,2,3@N",
+              "complex_name": "JS Bhupalapally, PDJ Court Complex"
+            }
+          ]
+        },
+        {
+          "dist_code": "22",
+          "dist_name": "Mancherial",
+          "complexes": [
+            {
+              "complex_code": "1290144@1,2,3@N",
+              "complex_name": "JS Bhupalapally, PDJ Court Complex"
+            }
+          ]
+        },
+        {
+          "dist_code": "6",
+          "dist_name": "Medak",
+          "complexes": [
+            {
+              "complex_code": "1290144@1,2,3@N",
+              "complex_name": "JS Bhupalapally, PDJ Court Complex"
+            }
+          ]
+        },
+        {
+          "dist_code": "23",
+          "dist_name": "Medchal Malkajgiri",
+          "complexes": [
+            {
+              "complex_code": "1290144@1,2,3@N",
+              "complex_name": "JS Bhupalapally, PDJ Court Complex"
+            }
+          ]
+        },
+        {
+          "dist_code": "24",
+          "dist_name": "Mulugu",
+          "complexes": [
+            {
+              "complex_code": "1290147@1,2,3@N",
+              "complex_name": "Mahabubabad, PDJ Court Complex"
+            },
+            {
+              "complex_code": "1290204@4@N",
+              "complex_name": "Thorrur, JCJ Court Complex"
+            }
+          ]
+        },
+        {
+          "dist_code": "25",
+          "dist_name": "Nagarkurnool",
+          "complexes": [
+            {
+              "complex_code": "1290147@1,2,3@N",
+              "complex_name": "Mahabubabad, PDJ Court Complex"
+            },
+            {
+              "complex_code": "1290204@4@N",
+              "complex_name": "Thorrur, JCJ Court Complex"
+            }
+          ]
+        },
+        {
+          "dist_code": "7",
+          "dist_name": "Nalgonda",
+          "complexes": [
+            {
+              "complex_code": "1290147@1,2,3@N",
+              "complex_name": "Mahabubabad, PDJ Court Complex"
+            },
+            {
+              "complex_code": "1290204@4@N",
+              "complex_name": "Thorrur, JCJ Court Complex"
+            }
+          ]
+        },
+        {
+          "dist_code": "26",
+          "dist_name": "Narayanpet",
+          "complexes": [
+            {
+              "complex_code": "1290147@1,2,3@N",
+              "complex_name": "Mahabubabad, PDJ Court Complex"
+            },
+            {
+              "complex_code": "1290204@4@N",
+              "complex_name": "Thorrur, JCJ Court Complex"
+            }
+          ]
+        },
+        {
+          "dist_code": "27",
+          "dist_name": "Nirmal",
+          "complexes": [
+            {
+              "complex_code": "1290147@1,2,3@N",
+              "complex_name": "Mahabubabad, PDJ Court Complex"
+            },
+            {
+              "complex_code": "1290204@4@N",
+              "complex_name": "Thorrur, JCJ Court Complex"
+            }
+          ]
+        },
+        {
+          "dist_code": "8",
+          "dist_name": "Nizamabad",
+          "complexes": [
+            {
+              "complex_code": "1290147@1,2,3@N",
+              "complex_name": "Mahabubabad, PDJ Court Complex"
+            },
+            {
+              "complex_code": "1290204@4@N",
+              "complex_name": "Thorrur, JCJ Court Complex"
+            }
+          ]
+        },
+        {
+          "dist_code": "28",
+          "dist_name": "Peddapalli",
+          "complexes": [
+            {
+              "complex_code": "1290147@1,2,3@N",
+              "complex_name": "Mahabubabad, PDJ Court Complex"
+            },
+            {
+              "complex_code": "1290204@4@N",
+              "complex_name": "Thorrur, JCJ Court Complex"
+            }
+          ]
+        },
+        {
+          "dist_code": "29",
+          "dist_name": "Rajanna Siricilla",
+          "complexes": [
+            {
+              "complex_code": "1290147@1,2,3@N",
+              "complex_name": "Mahabubabad, PDJ Court Complex"
+            },
+            {
+              "complex_code": "1290204@4@N",
+              "complex_name": "Thorrur, JCJ Court Complex"
+            }
+          ]
+        },
+        {
+          "dist_code": "9",
+          "dist_name": "Rangareddy",
+          "complexes": [
+            {
+              "complex_code": "1290112@1,2,3,5,6,31,43@N",
+              "complex_name": "Rangareddy, PDJ Court Complex"
+            },
+            {
+              "complex_code": "1290115@36,37,38@N",
+              "complex_name": "Kukatpally, ADJ-cum-Family Court"
+            },
+            {
+              "complex_code": "1290106@19,32,41@N",
+              "complex_name": "Rajendra Nagar, ADJ Court Complex"
+            },
+            {
+              "complex_code": "1290111@22@N",
+              "complex_name": "Hayathnagar, JCJcumXIV AMM Court Complex"
+            },
+            {
+              "complex_code": "1290114@11,25,42@N",
+              "complex_name": "Chevella, ADJ Court Complex"
+            },
+            {
+              "complex_code": "1290117@4,20,40@N",
+              "complex_name": "Ibrahimpatnam,ADJ Court Complex"
+            },
+            {
+              "complex_code": "1290105@9,24@N",
+              "complex_name": "Maheshwaram, SCJ Court Complex"
+            },
+            {
+              "complex_code": "1290220@33,34,35@N",
+              "complex_name": "Shadnagar, ADJ Court Complex"
+            },
+            {
+              "complex_code": "1290226@39@N",
+              "complex_name": "Amangal, JCJ Court Complex"
+            }
+          ]
+        },
+        {
+          "dist_code": "30",
+          "dist_name": "Sangareddy",
+          "complexes": [
+            {
+              "complex_code": "1290147@1,2,3@N",
+              "complex_name": "Mahabubabad, PDJ Court Complex"
+            },
+            {
+              "complex_code": "1290204@4@N",
+              "complex_name": "Thorrur, JCJ Court Complex"
+            }
+          ]
+        },
+        {
+          "dist_code": "31",
+          "dist_name": "Siddipet",
+          "complexes": [
+            {
+              "complex_code": "1290147@1,2,3@N",
+              "complex_name": "Mahabubabad, PDJ Court Complex"
+            },
+            {
+              "complex_code": "1290204@4@N",
+              "complex_name": "Thorrur, JCJ Court Complex"
+            }
+          ]
+        },
+        {
+          "dist_code": "32",
+          "dist_name": "Suryapet",
+          "complexes": [
+            {
+              "complex_code": "1290147@1,2,3@N",
+              "complex_name": "Mahabubabad, PDJ Court Complex"
+            },
+            {
+              "complex_code": "1290204@4@N",
+              "complex_name": "Thorrur, JCJ Court Complex"
+            }
+          ]
+        },
+        {
+          "dist_code": "33",
+          "dist_name": "Vikarabad",
+          "complexes": [
+            {
+              "complex_code": "1290147@1,2,3@N",
+              "complex_name": "Mahabubabad, PDJ Court Complex"
+            },
+            {
+              "complex_code": "1290204@4@N",
+              "complex_name": "Thorrur, JCJ Court Complex"
+            }
+          ]
+        },
+        {
+          "dist_code": "34",
+          "dist_name": "Wanaparthy",
+          "complexes": [
+            {
+              "complex_code": "1290147@1,2,3@N",
+              "complex_name": "Mahabubabad, PDJ Court Complex"
+            },
+            {
+              "complex_code": "1290204@4@N",
+              "complex_name": "Thorrur, JCJ Court Complex"
+            }
+          ]
+        },
+        {
+          "dist_code": "10",
+          "dist_name": "Warangal",
+          "complexes": [
+            {
+              "complex_code": "1290147@1,2,3@N",
+              "complex_name": "Mahabubabad, PDJ Court Complex"
+            },
+            {
+              "complex_code": "1290204@4@N",
+              "complex_name": "Thorrur, JCJ Court Complex"
+            }
+          ]
+        },
+        {
+          "dist_code": "35",
+          "dist_name": "Yadadri Bhuvanagiri",
+          "complexes": [
+            {
+              "complex_code": "1290147@1,2,3@N",
+              "complex_name": "Mahabubabad, PDJ Court Complex"
+            },
+            {
+              "complex_code": "1290204@4@N",
+              "complex_name": "Thorrur, JCJ Court Complex"
+            }
+          ]
+        }
+      ]
     }
   ]
 }

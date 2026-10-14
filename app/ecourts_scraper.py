@@ -24,10 +24,74 @@ from PIL import Image, ImageDraw, ImageFont
 
 from app.config import settings
 from app.schemas import SearchRequest, SearchStatus, CourtOrderResult
-from app.services.session_manager import session_manager, SearchSession
-from app.services.captcha_solver import captcha_solver
+from app.search_session_manager import session_manager, SearchSession
 
 logger = logging.getLogger(__name__)
+
+
+# ---------------------------------------------------------------------------
+# Automated CAPTCHA Solver using ddddocr with image preprocessing
+# ---------------------------------------------------------------------------
+class CaptchaSolver:
+    def __init__(self):
+        self._ocr = None
+
+    def _get_ocr(self):
+        if self._ocr is None:
+            import ddddocr
+            logger.info("Initializing ddddocr engine for automated CAPTCHA recognition...")
+            self._ocr = ddddocr.DdddOcr(show_ad=False)
+        return self._ocr
+
+    def preprocess_image(self, image_bytes: bytes) -> bytes:
+        try:
+            im = Image.open(io.BytesIO(image_bytes))
+            if im.mode in ("RGBA", "LA", "P"):
+                if im.mode == "P":
+                    im = im.convert("RGBA")
+                bg = Image.new("RGB", im.size, (255, 255, 255))
+                if "A" in im.getbands():
+                    bg.paste(im, mask=im.split()[-1])
+                else:
+                    bg.paste(im, (0, 0))
+                buf = io.BytesIO()
+                bg.save(buf, format="PNG")
+                return buf.getvalue()
+            elif im.mode != "RGB":
+                im = im.convert("RGB")
+                buf = io.BytesIO()
+                im.save(buf, format="PNG")
+                return buf.getvalue()
+        except Exception as e:
+            logger.debug("Image preprocessing bypassed: %s", e)
+        return image_bytes
+
+    def solve(self, image_bytes: bytes) -> Optional[str]:
+        if not image_bytes or len(image_bytes) < 300:
+            logger.warning("Empty or truncated CAPTCHA bytes received.")
+            return None
+
+        try:
+            processed_bytes = self.preprocess_image(image_bytes)
+            ocr = self._get_ocr()
+            raw_text = ocr.classification(processed_bytes)
+            if not raw_text:
+                logger.warning("ddddocr returned empty prediction on %d bytes.", len(processed_bytes))
+                return None
+
+            cleaned = re.sub(r"[^a-zA-Z0-9]", "", raw_text.strip().lower())
+            if not cleaned:
+                logger.warning("ddddocr output contained no alphanumeric characters.")
+                return None
+
+            logger.info("CAPTCHA solved automatically: '%s' (raw: '%s')", cleaned, raw_text)
+            return cleaned
+        except Exception as exc:
+            logger.error("Failed to solve CAPTCHA via ddddocr: %s", exc, exc_info=True)
+            return None
+
+
+captcha_solver = CaptchaSolver()
 
 
 # ---------------------------------------------------------------------------
@@ -1381,7 +1445,7 @@ class ECourtsScraperService:
                     order_url = f"/api/document/{search_id}/{idx}"
                 else:
                     # Fallback authentic PDF record
-                    from app.services.pdf_generator import generate_court_order_pdf
+                    from app.pdf_report_generator import generate_court_order_pdf
                     fallback_pdf = generate_court_order_pdf(
                         court_name=item.get("court_name") or req.court_complex,
                         case_number=case_raw,
@@ -1671,7 +1735,7 @@ class ECourtsScraperService:
             ("EX/405/2021", "Execution Petition", "Sunita Devi vs Reliance General Insurance", "Court of Motor Accidents Claims Tribunal")
         ]
 
-        from app.services.pdf_generator import generate_court_order_pdf
+        from app.pdf_report_generator import generate_court_order_pdf
 
         results = []
         for idx, (c_num, c_type, parties, court) in enumerate(sample_cases, start=1):

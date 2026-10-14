@@ -6,8 +6,8 @@ import pytest
 import asyncio
 from bs4 import BeautifulSoup
 from app.schemas import SearchRequest, OrderDateCriteria, SearchStatus
-from app.services.session_manager import session_manager
-from app.services.ecourts_scraper import (
+from app.search_session_manager import session_manager
+from app.ecourts_scraper import (
     match_option,
     normalize_text,
     generate_mock_captcha,
@@ -116,7 +116,6 @@ def test_match_option_telangana_locations():
     val, err = match_option("Kukatpally Court Complex", complex_options)
     assert val == "1290115@36,37,38@N"
     assert err is None
-
 
 
 def test_generate_mock_captcha():

@@ -8,10 +8,10 @@ import json
 from pathlib import Path
 from typing import List, Dict, Any, Optional
 
-from app.services.ecourts_scraper import MOCK_LOCATION_DB, normalize_text, canonical_key
+from app.ecourts_scraper import MOCK_LOCATION_DB, normalize_text, canonical_key
 
-DATA_FILE = Path(__file__).resolve().parent.parent / "data" / "ecourts_locations.json"
-CACHE_FILE = Path(__file__).resolve().parent.parent / "data" / "locations_cache.json"
+DATA_FILE = Path(__file__).resolve().parent / "court_locations.json"
+CACHE_FILE = Path(__file__).resolve().parent / "locations_cache.json"
 
 
 class LocationService:

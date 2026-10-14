@@ -6,11 +6,16 @@ Endpoints:
 - GET /api/search/{search_id}
 - POST /api/search/{search_id}/captcha
 - POST /api/search/{search_id}/cancel
+- GET /api/document/{search_id}/{sl_no}
+- GET /api/locations
+- GET /api/locations/states
+- GET /api/locations/districts
+- GET /api/locations/complexes
 """
 
 import asyncio
 from datetime import datetime
-from fastapi import APIRouter, HTTPException, BackgroundTasks, status, Response
+from fastapi import APIRouter, HTTPException, BackgroundTasks, status, Response, Query
 from fastapi.responses import RedirectResponse
 import logging
 
@@ -21,9 +26,10 @@ from app.schemas import (
     HealthResponse,
     SearchStatus
 )
-from app.services.session_manager import session_manager
-from app.services.ecourts_scraper import ecourts_scraper
-from app.services.location_service import location_service
+from app.search_session_manager import session_manager
+from app.ecourts_scraper import ecourts_scraper
+from app.court_location_service import location_service
+from app.pdf_report_generator import generate_court_order_pdf
 
 logger = logging.getLogger(__name__)
 
@@ -194,7 +200,6 @@ async def get_court_order_document(search_id: str, sl_no: str):
             break
 
     if target_result:
-        from app.services.pdf_generator import generate_court_order_pdf
         pdf_bytes = generate_court_order_pdf(
             court_name=target_result.court_name or "District Court",
             case_number=target_result.case_number or "N/A",
@@ -238,13 +243,27 @@ async def get_states():
 
 
 @router.get("/locations/districts")
-async def get_districts(state: str):
-    """Return list of districts for a selected state."""
-    return location_service.get_districts(state)
+async def get_districts(
+    state: str = Query(None, description="State name"),
+    state_code: str = Query(None, description="State code")
+):
+    """Return list of districts for a selected state name or state code."""
+    param = state or state_code
+    if not param:
+        raise HTTPException(status_code=400, detail="state or state_code query parameter is required")
+    return await location_service.get_districts(param)
 
 
 @router.get("/locations/complexes")
-async def get_court_complexes(state: str, district: str):
+async def get_court_complexes(
+    state: str = Query(None, description="State name"),
+    state_code: str = Query(None, description="State code"),
+    district: str = Query(None, description="District name"),
+    dist_code: str = Query(None, description="District code")
+):
     """Return list of court complexes for a selected district."""
-    return location_service.get_court_complexes(state, district)
-
+    st = state or state_code
+    dt = district or dist_code
+    if not st or not dt:
+        raise HTTPException(status_code=400, detail="state and district parameters are required")
+    return await location_service.get_court_complexes(st, dt)

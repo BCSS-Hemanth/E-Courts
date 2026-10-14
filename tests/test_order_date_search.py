@@ -78,7 +78,7 @@ async def test_non_existent_search_404():
 
 @pytest.mark.asyncio
 async def test_document_endpoint_with_cached_doc():
-    from app.services.session_manager import session_manager
+    from app.search_session_manager import session_manager
     from app.schemas import SearchRequest, OrderDateCriteria
     
     req = SearchRequest(

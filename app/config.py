@@ -6,12 +6,20 @@ import os
 from pathlib import Path
 from dotenv import load_dotenv
 
-BASE_DIR = Path(__file__).resolve().parent.parent.parent
+BASE_DIR = Path(__file__).resolve().parent.parent
+APP_DIR = Path(__file__).resolve().parent
+
+# Load environment files
 load_dotenv(BASE_DIR / ".env")
-load_dotenv(BASE_DIR.parent / ".env")
 
 
 class Settings:
+    # Directories
+    BASE_DIR: Path = BASE_DIR
+    APP_DIR: Path = APP_DIR
+    PUBLIC_DIR: Path = APP_DIR / "public"
+    LOCATIONS_FILE: Path = APP_DIR / "court_locations.json"
+
     # Official eCourts Court Orders URL
     ECOURTS_BASE_URL: str = os.getenv(
         "ECOURTS_BASE_URL",
@@ -26,7 +34,6 @@ class Settings:
     PLAYWRIGHT_TIMEOUT_MS: int = int(os.getenv("PLAYWRIGHT_TIMEOUT_MS", "30000"))
 
     # Mock mode flag: when set to true, simulates live behavior safely
-    # (especially useful when external portal is geo-blocked, offline, or for automated tests)
     ECOURTS_MOCK_MODE: bool = os.getenv("ECOURTS_MOCK_MODE", "false").lower() in ("true", "1", "yes")
 
     # Server settings

@@ -20,9 +20,8 @@ import uvicorn
 import logging
 
 from app.config import settings
-from app.routers.search import router as search_router
-from app.routers.locations import router as locations_router
-from app.services.session_manager import session_manager
+from app.order_date_search import router as order_date_search_router
+from app.search_session_manager import session_manager
 
 logging.basicConfig(
     level=logging.INFO,
@@ -55,24 +54,23 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Include API Routers
-app.include_router(search_router)
-app.include_router(locations_router)
+# Include API Router
+app.include_router(order_date_search_router)
 
 # Mount Frontend static files
-FRONTEND_DIR = Path(__file__).resolve().parent.parent.parent / "frontend"
+PUBLIC_DIR = settings.PUBLIC_DIR
 
-if FRONTEND_DIR.exists():
-    app.mount("/static", StaticFiles(directory=str(FRONTEND_DIR)), name="static")
+if PUBLIC_DIR.exists():
+    app.mount("/static", StaticFiles(directory=str(PUBLIC_DIR)), name="static")
 
     @app.get("/", include_in_schema=False)
     async def serve_index():
-        index_file = FRONTEND_DIR / "index.html"
+        index_file = PUBLIC_DIR / "index.html"
         if index_file.exists():
             return FileResponse(index_file)
         return {"message": "Frontend index.html not found"}
 else:
-    logger.warning(f"Frontend directory not found at {FRONTEND_DIR}")
+    logger.warning(f"Public directory not found at {PUBLIC_DIR}")
 
 
 if __name__ == "__main__":

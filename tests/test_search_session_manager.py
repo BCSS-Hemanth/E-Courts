@@ -5,7 +5,7 @@ Unit tests for the In-Memory Session Manager.
 import pytest
 import asyncio
 from app.schemas import SearchRequest, OrderDateCriteria, SearchStatus
-from app.services.session_manager import SessionManager
+from app.search_session_manager import SessionManager
 
 
 @pytest.fixture

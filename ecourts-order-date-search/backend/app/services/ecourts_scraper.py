@@ -44,14 +44,33 @@ MOCK_LOCATION_DB: Dict[str, Dict[str, List[str]]] = {
             "Chief Metropolitan Magistrate Court Hyderabad",
             "Nampally Criminal Courts Complex"
         ],
+        "Rangareddy": [
+            "Rangareddy, PDJ Court Complex",
+            "Kukatpally, ADJ-cum-Family Court",
+            "Rajendra Nagar, ADJ Court Complex",
+            "Hayathnagar, JCJcumXIV AMM Court Complex",
+            "Chevella, ADJ Court Complex",
+            "Ibrahimpatnam,ADJ Court Complex",
+            "Maheshwaram, SCJ Court Complex",
+            "Shadnagar, ADJ Court Complex",
+            "Amangal, JCJ Court Complex"
+        ],
         "Ranga Reddy": [
-            "District and Sessions Court Ranga Reddy at L.B. Nagar",
-            "Kukatpally Court Complex",
-            "Malkajgiri Court Complex",
-            "Rajendranagar Court Complex",
-            "Ibrahimpatnam Court Complex"
+            "Rangareddy, PDJ Court Complex",
+            "Kukatpally, ADJ-cum-Family Court",
+            "Rajendra Nagar, ADJ Court Complex",
+            "Hayathnagar, JCJcumXIV AMM Court Complex",
+            "Chevella, ADJ Court Complex",
+            "Ibrahimpatnam,ADJ Court Complex",
+            "Maheshwaram, SCJ Court Complex",
+            "Shadnagar, ADJ Court Complex",
+            "Amangal, JCJ Court Complex"
         ],
         "Medchal-Malkajgiri": [
+            "District Court Medchal",
+            "Malkajgiri Court Complex"
+        ],
+        "Medchal Malkajgiri": [
             "District Court Medchal",
             "Malkajgiri Court Complex"
         ],
@@ -437,12 +456,23 @@ LOCATION_ALIASES: Dict[str, str] = {
     "silvassa": "Dadra and Nagar Haveli and Daman and Diu",
     "lakshadweep": "Lakshadweep",
     
-    # District aliases
-    "rangareddy": "Ranga Reddy",
-    "ranga reddi": "Ranga Reddy",
-    "rr district": "Ranga Reddy",
-    "medchal": "Medchal-Malkajgiri",
-    "malkajgiri": "Medchal-Malkajgiri",
+    # District & Court Complex aliases
+    "tg": "Telangana",
+    "ts": "Telangana",
+    "rangareddy": "Rangareddy",
+    "ranga reddy": "Rangareddy",
+    "ranga reddi": "Rangareddy",
+    "rr district": "Rangareddy",
+    "k.v. ranga reddy": "Rangareddy",
+    "kvrangareddy": "Rangareddy",
+    "kukatpally": "Kukatpally, ADJ-cum-Family Court",
+    "kukatpally court complex": "Kukatpally, ADJ-cum-Family Court",
+    "medchal": "Medchal Malkajgiri",
+    "malkajgiri": "Medchal Malkajgiri",
+    "medchal-malkajgiri": "Medchal Malkajgiri",
+    "medchal malkajgiri": "Medchal Malkajgiri",
+    "hyderabad": "Hyderabad CCC",
+    "hyderabad ccc": "Hyderabad CCC",
     "bangalore": "Bengaluru Urban",
     "bangalore urban": "Bengaluru Urban",
     "bengaluru": "Bengaluru Urban",
@@ -474,27 +504,49 @@ def normalize_text(text: str) -> str:
     return re.sub(r"\s+", " ", text.strip().lower())
 
 
+def canonical_key(text: str) -> str:
+    """Strip all non-alphanumeric characters and lowercase for resilient fuzzy matching."""
+    if not text:
+        return ""
+    return re.sub(r"[^a-z0-9]", "", text.lower())
+
+
+def extract_keywords(text: str) -> set:
+    """Extract non-trivial keyword tokens for fuzzy complex matching."""
+    stopwords = {
+        "court", "courts", "complex", "complexes", "district", "sessions",
+        "at", "and", "cum", "the", "of", "for", "in", "to", "city", "civil",
+        "judge", "adj", "scj", "jcj", "amm", "pdj", "ccc", "taluka", "addl"
+    }
+    tokens = re.findall(r"[a-z0-9]+", text.lower())
+    return {t for t in tokens if len(t) >= 3 and t not in stopwords}
+
+
 def match_option(user_input: str, available_options: List[Dict[str, str]]) -> Tuple[Optional[str], Optional[str]]:
     """
     Match user's typed string against available dropdown options.
     Options list format: [{'value': '1', 'text': 'Delhi'}, ...]
 
     Supports:
-    1. Exact match (case and whitespace insensitive)
-    2. Common Indian state/district alias mapping (e.g., 'TS'/'TG' -> 'Telangana')
-    3. Resilient substring / prefix matching
-    4. Ambiguity detection and informative error messages
+    1. Exact match (case, whitespace, and non-alphanumeric insensitive)
+    2. Common Indian state/district/court complex alias mapping
+    3. Resilient canonical alphanumeric matching (e.g. 'Ranga Reddy' <-> 'Rangareddy')
+    4. Resilient substring / prefix matching
+    5. Keyword / token overlap matching (e.g. 'Kukatpally Court Complex' <-> 'Kukatpally, ADJ-cum-Family Court')
+    6. Ambiguity detection and informative error messages
 
     Returns:
         (selected_value, error_message)
     """
     norm_user = normalize_text(user_input)
+    canon_user = canonical_key(user_input)
     if not norm_user:
         return None, "Input cannot be empty."
 
-    # Check alias lookup (e.g. 'ts' -> 'telangana', 'bangalore' -> 'bengaluru urban')
-    resolved_alias = LOCATION_ALIASES.get(norm_user)
+    # Check alias lookup (e.g. 'ts' -> 'telangana', 'ranga reddy' -> 'rangareddy', etc.)
+    resolved_alias = LOCATION_ALIASES.get(norm_user) or LOCATION_ALIASES.get(canon_user)
     norm_alias = normalize_text(resolved_alias) if resolved_alias else None
+    canon_alias = canonical_key(resolved_alias) if resolved_alias else None
 
     valid_options = []
     for opt in available_options:
@@ -502,12 +554,16 @@ def match_option(user_input: str, available_options: List[Dict[str, str]]) -> Tu
         opt_val = opt.get("value", "")
         if not opt_val or opt_val == "0" or "select" in opt_text.lower():
             continue  # skip placeholder options like '-- Select State --'
-        valid_options.append((opt, normalize_text(opt_text)))
+        valid_options.append((opt, normalize_text(opt_text), canonical_key(opt_text)))
 
-    # Step 1: Exact matches against user input or resolved alias (or direct value code)
+    # Step 1: Exact matches (normalized, alias, direct value code, or canonical alphanumeric)
     exact_matches = [
-        opt for opt, norm_opt in valid_options
-        if norm_user == norm_opt or (norm_alias and norm_alias == norm_opt) or user_input == opt.get("value")
+        opt for opt, norm_opt, canon_opt in valid_options
+        if norm_user == norm_opt
+        or (norm_alias and norm_alias == norm_opt)
+        or user_input == opt.get("value")
+        or (canon_user and canon_user == canon_opt)
+        or (canon_alias and canon_alias == canon_opt)
     ]
     if len(exact_matches) == 1:
         return exact_matches[0]["value"], None
@@ -517,9 +573,11 @@ def match_option(user_input: str, available_options: List[Dict[str, str]]) -> Tu
 
     # Step 2: Substring / partial match if no exact match
     partial_matches = [
-        opt for opt, norm_opt in valid_options
+        opt for opt, norm_opt, canon_opt in valid_options
         if (norm_user in norm_opt or norm_opt in norm_user)
+        or (canon_user and canon_opt and (canon_user in canon_opt or canon_opt in canon_user))
         or (norm_alias and (norm_alias in norm_opt or norm_opt in norm_alias))
+        or (canon_alias and canon_opt and (canon_alias in canon_opt or canon_opt in canon_alias))
     ]
 
     if len(partial_matches) == 1:
@@ -527,8 +585,11 @@ def match_option(user_input: str, available_options: List[Dict[str, str]]) -> Tu
     elif len(partial_matches) > 1:
         # Check if one of them starts with the user input or alias
         starts_with_matches = [
-            opt for opt, norm_opt in valid_options
-            if norm_opt.startswith(norm_user) or (norm_alias and norm_opt.startswith(norm_alias))
+            opt for opt, norm_opt, canon_opt in valid_options
+            if norm_opt.startswith(norm_user)
+            or (canon_user and canon_opt.startswith(canon_user))
+            or (norm_alias and norm_opt.startswith(norm_alias))
+            or (canon_alias and canon_opt.startswith(canon_alias))
         ]
         if len(starts_with_matches) == 1:
             return starts_with_matches[0]["value"], None
@@ -536,8 +597,24 @@ def match_option(user_input: str, available_options: List[Dict[str, str]]) -> Tu
         match_names = ", ".join([f"'{m['text']}'" for m in partial_matches[:5]])
         return None, f"Ambiguous input '{user_input}': multiple possible matches found ({match_names}). Please provide exact name."
 
-    # Step 3: No match found
-    available_sample = [opt["text"] for opt, _ in valid_options[:6]]
+    # Step 3: Keyword / token overlap match (e.g. 'Kukatpally Court Complex' -> 'Kukatpally, ADJ-cum-Family Court')
+    user_kw = extract_keywords(user_input)
+    if user_kw:
+        scored = []
+        for opt, _, _ in valid_options:
+            opt_kw = extract_keywords(opt.get("text", ""))
+            overlap = user_kw.intersection(opt_kw)
+            if overlap:
+                scored.append((len(overlap), opt))
+        if scored:
+            scored.sort(key=lambda x: x[0], reverse=True)
+            best_score = scored[0][0]
+            top_candidates = [opt for score, opt in scored if score == best_score]
+            if len(top_candidates) == 1:
+                return top_candidates[0]["value"], None
+
+    # Step 4: No match found
+    available_sample = [opt["text"] for opt, _, _ in valid_options[:6]]
     sample_str = ", ".join([f"'{s}'" for s in available_sample])
     return None, f"Could not find '{user_input}' in available options. Examples: {sample_str}"
 

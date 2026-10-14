@@ -83,6 +83,42 @@ def test_match_option_aliases():
     assert err is None
 
 
+def test_match_option_telangana_locations():
+    dist_options = [
+        {"value": "1", "text": "Adilabad"},
+        {"value": "2", "text": "Hyderabad CCC"},
+        {"value": "9", "text": "Rangareddy"},
+        {"value": "23", "text": "Medchal Malkajgiri"}
+    ]
+
+    # Spaced "Ranga Reddy" matches "Rangareddy"
+    val, err = match_option("Ranga Reddy", dist_options)
+    assert val == "9"
+    assert err is None
+
+    # Hyphenated "Medchal-Malkajgiri" matches "Medchal Malkajgiri"
+    val, err = match_option("Medchal-Malkajgiri", dist_options)
+    assert val == "23"
+    assert err is None
+
+    # "Hyderabad" matches "Hyderabad CCC"
+    val, err = match_option("Hyderabad", dist_options)
+    assert val == "2"
+    assert err is None
+
+    # Test Court Complex fuzzy keyword matching
+    complex_options = [
+        {"value": "1290112@1,2,3,5,6,31,43@N", "text": "Rangareddy, PDJ Court Complex"},
+        {"value": "1290115@36,37,38@N", "text": "Kukatpally, ADJ-cum-Family Court"},
+        {"value": "1290106@19,32,41@N", "text": "Rajendra Nagar, ADJ Court Complex"}
+    ]
+
+    val, err = match_option("Kukatpally Court Complex", complex_options)
+    assert val == "1290115@36,37,38@N"
+    assert err is None
+
+
+
 def test_generate_mock_captcha():
     text, b64 = generate_mock_captcha("z75cmr")
     assert text == "z75cmr"

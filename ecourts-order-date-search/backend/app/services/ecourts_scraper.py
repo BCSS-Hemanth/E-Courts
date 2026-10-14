@@ -995,8 +995,17 @@ class ECourtsScraperService:
         MAX_CAPTCHA_ATTEMPTS = 5
         captcha_success = False
 
-        captcha_img_loc = page.locator("#orderdatetab img[src*='securimage_show'], #captcha_image, img[src*='securimage_show'], img#captcha_img").first
-        refresh_btn_loc = page.locator("#orderdatetab a[onclick*='captcha'], #orderdatetab button[onclick*='captcha'], #orderdatetab a:has(i[class*='refresh']), a[title*='Refresh'], a[onclick*='refresh']").first
+        captcha_img_loc = page.locator(
+            "#div_captcha_order_date img[src*='securimage_show'], "
+            "#div_captcha_order_date img#captcha_image, "
+            "#orderdatetab img[src*='securimage_show']"
+        ).first
+        refresh_btn_loc = page.locator(
+            "#div_captcha_order_date a[onclick*='refreshCaptcha'], "
+            "#div_captcha_order_date a:has(img.refresh-btn), "
+            "#orderdatetab a[onclick*='captcha'], "
+            "a[onclick*='refreshCaptcha']"
+        ).first
 
         for attempt in range(1, MAX_CAPTCHA_ATTEMPTS + 1):
             if session.status == SearchStatus.CANCELLED:
@@ -1006,21 +1015,69 @@ class ECourtsScraperService:
             last_dialog_msg.clear()
             submit_order_result.clear()
 
-            # Wait briefly for CAPTCHA image rendering
-            await page.wait_for_timeout(800)
-            if await captcha_img_loc.count() == 0:
-                logger.warning("No CAPTCHA image element found on page.")
-                break
+            # Ensure order date tab pane is active and visible
+            await page.evaluate("""() => {
+                const pane = document.querySelector('#orderdatetab');
+                if (pane) {
+                    pane.classList.add('active', 'show');
+                    pane.style.display = 'block';
+                }
+            }""")
 
+            # Wait for CAPTCHA image to be fully loaded with non-zero dimensions
+            try:
+                await page.wait_for_function("""() => {
+                    const img = document.querySelector('#div_captcha_order_date img[src*="securimage_show"]') 
+                             || document.querySelector('#div_captcha_order_date img#captcha_image')
+                             || document.querySelector('#orderdatetab img[src*="securimage_show"]');
+                    return img && img.complete && img.naturalWidth > 20;
+                }""", timeout=7000)
+            except Exception:
+                await page.wait_for_timeout(1000)
+
+            # Strategy 1: Extract decoded image pixels directly via canvas
             img_bytes = None
             try:
-                img_bytes = await captcha_img_loc.screenshot()
+                b64_data = await page.evaluate("""() => {
+                    const img = document.querySelector('#div_captcha_order_date img[src*="securimage_show"]') 
+                             || document.querySelector('#div_captcha_order_date img#captcha_image')
+                             || document.querySelector('#orderdatetab img[src*="securimage_show"]');
+                    if (!img || !img.complete || img.naturalWidth < 20) return null;
+                    try {
+                        const canvas = document.createElement('canvas');
+                        canvas.width = img.naturalWidth;
+                        canvas.height = img.naturalHeight;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0);
+                        return canvas.toDataURL('image/png').split(',')[1];
+                    } catch (e) {
+                        return null;
+                    }
+                }""")
+                if b64_data:
+                    img_bytes = base64.b64decode(b64_data)
             except Exception as e:
-                logger.warning(f"Could not capture CAPTCHA screenshot: {e}")
+                logger.debug(f"Canvas extraction skipped: {e}")
 
-            if not img_bytes:
-                logger.warning("Empty CAPTCHA image bytes received.")
-                break
+            # Strategy 2: Fallback to Playwright element screenshot
+            if not img_bytes or len(img_bytes) < 300:
+                try:
+                    if await captcha_img_loc.count() > 0:
+                        img_bytes = await captcha_img_loc.screenshot()
+                except Exception as e:
+                    logger.warning(f"Could not capture CAPTCHA screenshot: {e}")
+
+            if not img_bytes or len(img_bytes) < 300:
+                logger.warning(f"Attempt {attempt}: Incomplete or empty CAPTCHA bytes ({len(img_bytes) if img_bytes else 0} bytes). Triggering reload...")
+                try:
+                    if await refresh_btn_loc.count() > 0:
+                        await refresh_btn_loc.click()
+                    else:
+                        await page.evaluate("() => { if (typeof refreshCaptcha === 'function') refreshCaptcha(); }")
+                except Exception:
+                    pass
+                await page.wait_for_timeout(1500)
+                continue
 
             solved_code = captcha_solver.solve(img_bytes)
             if not solved_code:
@@ -1032,7 +1089,7 @@ class ECourtsScraperService:
                         await page.evaluate("() => { if (typeof refreshCaptcha === 'function') refreshCaptcha(); }")
                 except Exception:
                     pass
-                await page.wait_for_timeout(1200)
+                await page.wait_for_timeout(1500)
                 continue
 
             logger.info(f"Attempt {attempt}: Solved CAPTCHA as '{solved_code}'. Submitting to eCourts...")

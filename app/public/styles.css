@@ -247,3 +247,190 @@ label.required-field {
     box-shadow: none;
     border-color: var(--border-color);
 }
+
+/* Tabs Navigation */
+.search-tabs-nav {
+    border-bottom: 2px solid #e2e8f0;
+}
+
+.search-tab-btn {
+    color: #64748b;
+    font-size: 1.02rem;
+    background-color: #f8fafc;
+    border: none !important;
+    border-bottom: 3px solid transparent !important;
+    transition: all 0.2s ease-in-out;
+}
+
+.search-tab-btn:hover {
+    color: var(--primary-color);
+    background-color: #f1f5f9;
+}
+
+.search-tab-btn.active {
+    color: var(--primary-color) !important;
+    background-color: #ffffff !important;
+    border-bottom: 3px solid var(--primary-color) !important;
+    font-weight: 700 !important;
+}
+
+/* CNR Search Specific Styling matching user screenshot */
+.cnr-search-container {
+    padding: 1.5rem 1rem;
+}
+
+.cnr-title {
+    color: #1e3a8a;
+    font-size: 1.65rem;
+    font-weight: 700;
+}
+
+.cnr-number-input {
+    font-size: 1.25rem;
+    padding: 0.85rem 1.75rem;
+    border-width: 2px;
+    letter-spacing: 0.08em;
+    border-color: #94a3b8;
+    color: #1e293b;
+    background-color: #ffffff;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.cnr-number-input:focus {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.15);
+    background-color: #ffffff;
+}
+
+.cnr-number-input::placeholder {
+    color: #64748b;
+    font-weight: 400;
+    letter-spacing: normal;
+    font-size: 1.1rem;
+}
+
+.spin-animation {
+    animation: spin 0.6s linear infinite;
+}
+
+@keyframes spin {
+    100% { transform: rotate(360deg); }
+}
+
+/* Authentic Official eCourts Portal Tables Layout */
+#history_cnr, #caseBusinessDiv_cnr {
+    overflow-x: auto;
+    font-size: 0.95rem;
+    color: #1e293b;
+    line-height: 1.5;
+}
+
+#history_cnr table, #caseBusinessDiv_cnr table {
+    width: 100%;
+    margin-bottom: 1.25rem;
+    border-collapse: collapse;
+    background-color: #ffffff;
+    border: 1px solid #dee2e6;
+}
+
+#history_cnr th, #history_cnr td,
+#caseBusinessDiv_cnr th, #caseBusinessDiv_cnr td {
+    padding: 0.55rem 0.75rem;
+    vertical-align: middle;
+    border: 1px solid #dee2e6;
+}
+
+#history_cnr th, #caseBusinessDiv_cnr th {
+    background-color: #f8fafc;
+    color: #334155;
+    font-weight: 600;
+}
+
+/* Daily status official table styling (borderless) */
+#caseBusinessDiv_cnr table {
+    border: none !important;
+    background-color: transparent !important;
+}
+
+#caseBusinessDiv_cnr th, #caseBusinessDiv_cnr td {
+    border: none !important;
+    background-color: transparent !important;
+    padding: 0.3rem 0.5rem;
+}
+
+#caseBusinessDiv_cnr hr {
+    border-top: 1px solid #94a3b8;
+    margin: 0.5rem 0;
+}
+
+#history_cnr h2, #history_cnr h3,
+#caseBusinessDiv_cnr h1, #caseBusinessDiv_cnr h2, #caseBusinessDiv_cnr h3 {
+    margin-top: 1.25rem;
+    margin-bottom: 0.75rem;
+    color: #1e3a8a;
+}
+
+#history_cnr h2#chHeading {
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: #0f172a;
+    border-bottom: 2px solid #2563eb;
+    padding-bottom: 0.5rem;
+    margin-bottom: 1.25rem;
+}
+
+#history_cnr .h2class {
+    font-size: 1.15rem;
+}
+
+#history_cnr a, #caseBusinessDiv_cnr a {
+    color: #0d6efd;
+    text-decoration: underline;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+#history_cnr a:hover, #caseBusinessDiv_cnr a:hover {
+    color: #0a58ca;
+    text-decoration: underline;
+}
+
+.Petitioner_Advocate_table, .Respondent_Advocate_table {
+    list-style: none;
+    padding: 0.75rem 1rem;
+    background-color: #ffffff;
+    border-radius: 4px;
+    margin-bottom: 1rem;
+    border: 1px solid #dee2e6;
+}
+
+.Petitioner_Advocate_table li, .Respondent_Advocate_table li {
+    padding: 0.25rem 0;
+}
+
+/* Modal styling for PDF and Acknowledgment */
+#modalOders .modal-content, #modal-ack .modal-content {
+    border-radius: 0.75rem;
+    overflow: hidden;
+}
+
+#modal-ack table td {
+    padding: 0.4rem 0.6rem;
+}
+
+/* Borderless Daily Status table matching official eCourts */
+#caseBusinessDiv_cnr table,
+#caseBusinessDiv_cnr table tr,
+#caseBusinessDiv_cnr table td {
+    border: none !important;
+    background: transparent !important;
+}
+
+#caseBusinessDiv_cnr hr {
+    border: 0;
+    border-top: 1px solid #777;
+    opacity: 0.75;
+    margin: 0.5rem 0;
+}
+
+

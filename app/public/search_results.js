@@ -42,16 +42,17 @@ const ResultsModule = (() => {
             }
 
             // Document link button
-            let actionCell = `<span class="text-muted small fst-italic">Unavailable</span>`;
+            let actionCell = `<span class="badge bg-light text-muted border fw-normal px-2 py-1"><i class="bi bi-file-earmark-x me-1"></i>Not Uploaded</span>`;
             if (order.order_url) {
                 const isDecree = order.order_type && order.order_type.toLowerCase().includes("decree");
                 const btnLabel = isDecree ? "Open Decree" : "Open Official Order";
+                const isExternal = order.order_url.startsWith("http");
                 actionCell = `
                     <a href="${escapeHtml(order.order_url)}" 
                        target="_blank" 
                        rel="noopener noreferrer" 
                        class="btn-official-order"
-                       title="Open authentic official document in new tab">
+                       title="${isExternal ? 'Open direct official government document' : 'Open authentic document stream in new tab'}">
                         <i class="bi bi-file-earmark-pdf"></i>
                         <span>${escapeHtml(btnLabel)}</span>
                         <i class="bi bi-box-arrow-up-right ms-1" style="font-size: 0.7rem;"></i>

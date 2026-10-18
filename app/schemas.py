@@ -2,8 +2,9 @@
 Pydantic data models and schemas for eCourts Order Date Search.
 """
 
+import re
 from enum import Enum
-from typing import List, Optional, Literal
+from typing import List, Optional, Literal, Dict, Any
 from datetime import datetime
 from pydantic import BaseModel, Field, field_validator, model_validator
 
@@ -169,3 +170,80 @@ class HealthResponse(BaseModel):
     timestamp: str
     version: str = "1.0.0"
     active_sessions: int
+
+
+# ---------------------------------------------------------------------------
+# CNR Search Schemas
+# ---------------------------------------------------------------------------
+
+class CnrSearchRequest(BaseModel):
+    """
+    Search request for case retrieval via 16-digit CNR number.
+    Format: 2 state letters + 2 district letters + 6 case/establishment digits + 4 year digits.
+    Example: MHAU019999992015
+    """
+    cnr_number: str = Field(
+        ...,
+        min_length=16,
+        max_length=16,
+        description="16-character alphanumeric Case Navigation Record (CNR) number",
+        examples=["MHAU019999992015"]
+    )
+
+    @field_validator("cnr_number")
+    @classmethod
+    def validate_cnr(cls, v: str) -> str:
+        v = v.strip().upper()
+        if not re.match(r"^[A-Z0-9]{16}$", v):
+            raise ValueError("CNR number must be exactly 16 alphanumeric characters (e.g. MHAU019999992015).")
+        return v
+
+
+class CnrCaseDetails(BaseModel):
+    """
+    Structured judicial case details extracted from CNR lookup.
+    """
+    cnr_number: str = Field(..., description="16-character alphanumeric CNR identifier")
+    case_type: Optional[str] = Field(None, description="Case classification (e.g. Regular Civil Suit, Criminal Case)")
+    filing_number: Optional[str] = Field(None, description="Official court filing sequence")
+    filing_date: Optional[str] = Field(None, description="Filing registration date (DD-MM-YYYY)")
+    registration_number: Optional[str] = Field(None, description="Case registration number")
+    registration_date: Optional[str] = Field(None, description="Registration date (DD-MM-YYYY)")
+    case_status: Optional[str] = Field(None, description="Status of the case: PENDING or DISPOSED")
+    nature_of_disposal: Optional[str] = Field(None, description="Disposal reason if disposed (e.g. Contested Dismissed, Decided)")
+    subordinate_court: Optional[str] = Field(None, description="Lower court trial details if appeal")
+    first_hearing_date: Optional[str] = Field(None, description="First hearing date (DD-MM-YYYY)")
+    decision_date: Optional[str] = Field(None, description="Final decision or disposal date (DD-MM-YYYY)")
+    next_hearing_date: Optional[str] = Field(None, description="Upcoming scheduled hearing date (DD-MM-YYYY)")
+    case_stage: Optional[str] = Field(None, description="Current procedural stage")
+    court_number_judge: Optional[str] = Field(None, description="Presiding judge designation and courtroom")
+    petitioner_and_advocate: Optional[str] = Field(None, description="Petitioner(s) and legal counsel")
+    respondent_and_advocate: Optional[str] = Field(None, description="Respondent(s) and legal counsel")
+    court_name: Optional[str] = Field(None, description="Court Complex / Establishment")
+    district_name: Optional[str] = Field(None, description="Judicial District")
+    state_name: Optional[str] = Field(None, description="State / Union Territory")
+    acts: List[Dict[str, str]] = Field(default_factory=list, description="Acts and sections involved")
+    fir_details: Optional[Dict[str, Any]] = Field(default=None, description="FIR details: Police station, FIR No, Year")
+    split_case_details: Optional[str] = Field(default=None, description="Split case or linked case numbers")
+    history_of_hearings: List[Dict[str, Any]] = Field(default_factory=list, description="Historical hearing timeline")
+    orders: List[CourtOrderResult] = Field(default_factory=list, description="All associated orders and judgments")
+    raw_html: Optional[str] = Field(default=None, description="Exact raw HTML as rendered on official eCourts website")
+    business_records: Dict[str, str] = Field(default_factory=dict, description="Authentic official HTML for each Case History hearing date")
+
+
+class CnrSearchStatusResponse(BaseModel):
+    """
+    Real-time status response for CNR search sessions.
+    """
+    search_id: str
+    status: SearchStatus
+    message: Optional[str] = None
+    error_code: Optional[str] = None
+    captcha_image: Optional[str] = None
+    case_details: Optional[CnrCaseDetails] = None
+    raw_html: Optional[str] = None
+    orders: List[CourtOrderResult] = []
+    total_count: int = 0
+    created_at: float
+    updated_at: float
+

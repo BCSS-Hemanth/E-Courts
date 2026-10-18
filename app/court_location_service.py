@@ -10,8 +10,10 @@ from typing import List, Dict, Any, Optional
 
 from app.ecourts_scraper import MOCK_LOCATION_DB, normalize_text, canonical_key
 
-DATA_FILE = Path(__file__).resolve().parent / "court_locations.json"
-CACHE_FILE = Path(__file__).resolve().parent / "locations_cache.json"
+APP_DIR = Path(__file__).resolve().parent
+DATA_FILE_PRIMARY = APP_DIR / "data" / "court_locations.json"
+DATA_FILE_SECONDARY = APP_DIR / "court_locations.json"
+CACHE_FILE = APP_DIR / "locations_cache.json"
 
 
 class LocationService:
@@ -20,9 +22,26 @@ class LocationService:
 
     def load_data(self) -> Dict[str, Any]:
         """Load and merge local JSON cache with built-in reference database."""
-        locations_by_state: Dict[str, Dict[str, Any]] = {}
+        if self._cached_data and len(self._cached_data.get("states", [])) > 0:
+            return self._cached_data
 
-        # 1. Base from MOCK_LOCATION_DB (fallback reference across all Indian States)
+        target_file = DATA_FILE_PRIMARY if DATA_FILE_PRIMARY.exists() else DATA_FILE_SECONDARY
+
+        if target_file.exists():
+            try:
+                with open(target_file, "r", encoding="utf-8") as f:
+                    file_data = json.load(f)
+                    states = file_data.get("states", [])
+                    if states and len(states) >= 36:
+                        # Full authentic directory loaded
+                        sorted_states = sorted(states, key=lambda s: s["state_name"])
+                        self._cached_data = {"states": sorted_states}
+                        return self._cached_data
+            except Exception as e:
+                print(f"Warning: Failed to load {target_file}: {e}")
+
+        # Fallback to MOCK_LOCATION_DB if JSON file is missing or incomplete
+        locations_by_state: Dict[str, Dict[str, Any]] = {}
         for s_name, districts in MOCK_LOCATION_DB.items():
             dist_list = []
             for d_name, complexes in districts.items():
@@ -38,40 +57,9 @@ class LocationService:
                 "districts": dist_list
             }
 
-        # 2. Overlay live downloaded data from ecourts_locations.json
-        if DATA_FILE.exists():
-            try:
-                with open(DATA_FILE, "r", encoding="utf-8") as f:
-                    file_data = json.load(f)
-                    for state in file_data.get("states", []):
-                        s_name = state.get("state_name", "")
-                        if not s_name:
-                            continue
-                        norm_k = normalize_text(s_name)
-                        canon_k = canonical_key(s_name)
-                        # Find existing matching key (exact, alias, or substring)
-                        matched_key = None
-                        for k in list(locations_by_state.keys()):
-                            if (
-                                k == norm_k
-                                or canonical_key(k) == canon_k
-                                or (len(k) > 4 and (k in norm_k or norm_k in k))
-                            ):
-                                matched_key = k
-                                break
-                        
-                        target_key = matched_key if matched_key else norm_k
-                        locations_by_state[target_key] = {
-                            "state_code": state.get("state_code", s_name),
-                            "state_name": s_name,
-                            "districts": state.get("districts", [])
-                        }
-            except Exception as e:
-                print(f"Warning: Failed to load {DATA_FILE}: {e}")
-
-        # Sort states alphabetically by name
         sorted_states = sorted(locations_by_state.values(), key=lambda s: s["state_name"])
-        return {"states": sorted_states}
+        self._cached_data = {"states": sorted_states}
+        return self._cached_data
 
     def get_all(self) -> Dict[str, Any]:
         """Return the complete state-district-complex tree."""

@@ -18,7 +18,11 @@ class Settings:
     BASE_DIR: Path = BASE_DIR
     APP_DIR: Path = APP_DIR
     PUBLIC_DIR: Path = APP_DIR / "public"
-    LOCATIONS_FILE: Path = APP_DIR / "court_locations.json"
+    LOCATIONS_FILE: Path = (
+        APP_DIR / "data" / "court_locations.json"
+        if (APP_DIR / "data" / "court_locations.json").exists()
+        else APP_DIR / "court_locations.json"
+    )
 
     # Official eCourts Court Orders URL
     ECOURTS_BASE_URL: str = os.getenv(

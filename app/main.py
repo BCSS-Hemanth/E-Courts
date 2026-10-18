@@ -6,8 +6,8 @@ Serves both backend REST API and the frontend static assets.
 import sys
 import asyncio
 
-# Ensure Windows ProactorEventLoop is used for Playwright subprocesses
-if sys.platform == "win32":
+# ProactorEventLoop is default on Windows since Python 3.8; only set explicitly on legacy Python versions (<3.14)
+if sys.platform == "win32" and sys.version_info < (3, 14):
     asyncio.set_event_loop_policy(asyncio.WindowsProactorEventLoopPolicy())
 
 from contextlib import asynccontextmanager
@@ -21,6 +21,7 @@ import logging
 
 from app.config import settings
 from app.order_date_search import router as order_date_search_router
+from app.cnr_search import router as cnr_search_router
 from app.search_session_manager import session_manager
 
 logging.basicConfig(
@@ -32,16 +33,16 @@ logger = logging.getLogger("ecourts_search")
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    logger.info("Starting eCourts Order Date Search service...")
+    logger.info("Starting eCourts Search service (Order Date & CNR)...")
     yield
-    logger.info("Shutting down eCourts Order Date Search service. Cleaning up active sessions...")
+    logger.info("Shutting down eCourts Search service. Cleaning up active sessions...")
     await session_manager.cleanup_expired_sessions()
 
 
 app = FastAPI(
-    title="eCourts Order Date Search API",
-    description="Standalone interface for Indian eCourts Order Date Search with Playwright scraping.",
-    version="1.0.0",
+    title="eCourts Judicial Search API",
+    description="Standalone interface for Indian eCourts Order Date Search and CNR Search with automated scraping.",
+    version="1.1.0",
     lifespan=lifespan
 )
 
@@ -54,8 +55,19 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Include API Router
+@app.middleware("http")
+async def add_no_cache_headers(request, call_next):
+    response = await call_next(request)
+    if request.url.path.startswith("/static") or request.url.path == "/":
+        response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+        response.headers["Pragma"] = "no-cache"
+        response.headers["Expires"] = "0"
+    return response
+
+# Include API Routers
 app.include_router(order_date_search_router)
+app.include_router(cnr_search_router)
+
 
 # Mount Frontend static files
 PUBLIC_DIR = settings.PUBLIC_DIR

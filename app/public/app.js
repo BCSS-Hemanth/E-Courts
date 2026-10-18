@@ -4,8 +4,57 @@
  */
 
 function bootstrapApp() {
-    // Initialize Search Module
+    // Initialize Order Date Search Module
     SearchModule.init();
+
+    // Initialize CNR Search Module
+    if (typeof CnrSearchModule !== "undefined") {
+        CnrSearchModule.init();
+    }
+
+    // Independent Tab Visibility Synchronization
+    const tabOrderDate = document.getElementById("tab-order-date");
+    const tabCnr = document.getElementById("tab-cnr");
+
+    function syncTabVisibility(activeTab) {
+        const isOrderDate = (activeTab === "order-date");
+
+        const odStatus = document.getElementById("statusContainer");
+        const odResults = document.getElementById("resultsCard");
+        const cnrStatus = document.getElementById("cnrStatusContainer");
+        const cnrResults = document.getElementById("cnrResultsCard");
+
+        if (isOrderDate) {
+            // Hide CNR outputs
+            if (cnrStatus) cnrStatus.style.display = "none";
+            if (cnrResults) cnrResults.classList.add("d-none");
+            // Show Order Date outputs if active or completed
+            if (odStatus && typeof SearchModule !== "undefined" && SearchModule.getState() !== "READY") {
+                odStatus.style.display = "block";
+            }
+            if (odResults && typeof SearchModule !== "undefined" && SearchModule.getState() === "RESULTS_FOUND") {
+                odResults.classList.remove("d-none");
+            }
+        } else {
+            // Hide Order Date outputs
+            if (odStatus) odStatus.style.display = "none";
+            if (odResults) odResults.classList.add("d-none");
+            // Show CNR outputs if active or completed
+            if (cnrStatus && typeof CnrSearchModule !== "undefined" && CnrSearchModule.getState() !== "READY") {
+                cnrStatus.style.display = "block";
+            }
+            if (cnrResults && typeof CnrSearchModule !== "undefined" && CnrSearchModule.getState() === "RESULTS_FOUND") {
+                cnrResults.classList.remove("d-none");
+            }
+        }
+    }
+
+    if (tabOrderDate) {
+        tabOrderDate.addEventListener("shown.bs.tab", () => syncTabVisibility("order-date"));
+    }
+    if (tabCnr) {
+        tabCnr.addEventListener("shown.bs.tab", () => syncTabVisibility("cnr"));
+    }
 
     // Date Picker Sync Helpers
     setupDatePicker("fromDateInput", "fromDateBtn", "nativeFromDate");
@@ -43,7 +92,7 @@ function bootstrapApp() {
         });
     }
 
-    console.log("eCourts Order Date Search Frontend Initialized.");
+    console.log("eCourts Judicial Portal (Order Date & CNR) Frontend Initialized.");
 }
 
 if (document.readyState === "loading") {

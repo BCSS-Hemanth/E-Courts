@@ -7,8 +7,8 @@ import sys
 import asyncio
 from pathlib import Path
 
-# Ensure Windows ProactorEventLoop is used for Playwright subprocesses
-if sys.platform == "win32":
+# ProactorEventLoop is default on Windows since Python 3.8; only set explicitly on legacy Python versions (<3.14)
+if sys.platform == "win32" and sys.version_info < (3, 14):
     asyncio.set_event_loop_policy(asyncio.WindowsProactorEventLoopPolicy())
 
 ROOT_DIR = Path(__file__).resolve().parent

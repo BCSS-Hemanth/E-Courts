@@ -18,9 +18,9 @@ logger = logging.getLogger(__name__)
 
 
 class SearchSession:
-    def __init__(self, search_id: str, request: SearchRequest):
+    def __init__(self, search_id: str, request: Any):
         self.search_id: str = search_id
-        self.request: SearchRequest = request
+        self.request: Any = request
         self.status: SearchStatus = SearchStatus.RUNNING
         self.message: Optional[str] = "Search initiated. Initializing browser session..."
         self.error_code: Optional[str] = None
@@ -28,6 +28,7 @@ class SearchSession:
         self.captcha_event: asyncio.Event = asyncio.Event()
         self.captcha_answer: Optional[str] = None
         self.results: List[CourtOrderResult] = []
+        self.case_details: Optional[Any] = None
         self.total_count: int = 0
         self.cached_documents: Dict[str, Dict[str, Any]] = {}
 
@@ -97,7 +98,7 @@ class SessionManager:
         self._sessions: Dict[str, SearchSession] = {}
         self._lock = asyncio.Lock()
 
-    async def create_session(self, request: SearchRequest) -> SearchSession:
+    async def create_session(self, request: Any) -> SearchSession:
         await self.cleanup_expired_sessions()
 
         if len(self._sessions) >= settings.MAX_CONCURRENT_SESSIONS:
@@ -111,6 +112,11 @@ class SessionManager:
         return session
 
     async def get_session(self, search_id: str) -> Optional[SearchSession]:
+        if search_id in ("active", "latest"):
+            async with self._lock:
+                if self._sessions:
+                    return max(self._sessions.values(), key=lambda s: s.updated_at)
+                return None
         session = self._sessions.get(search_id)
         if not session:
             return None
@@ -127,7 +133,8 @@ class SessionManager:
         message: Optional[str] = None,
         error_code: Optional[str] = None,
         captcha_image: Optional[str] = None,
-        results: Optional[List[CourtOrderResult]] = None
+        results: Optional[List[CourtOrderResult]] = None,
+        case_details: Optional[Any] = None
     ):
         session = self._sessions.get(search_id)
         if not session:
@@ -143,6 +150,8 @@ class SessionManager:
         if results is not None:
             session.results = results
             session.total_count = len(results)
+        if case_details is not None:
+            session.case_details = case_details
 
         session.touch()
         logger.info(f"Session {search_id} updated to status {status.value}")

@@ -65,11 +65,15 @@ const SearchModule = (() => {
                 });
             }
 
-            // Bind State change handler
-            stateSelect.addEventListener("change", () => {
-                stateSelect.classList.remove("is-invalid");
+            // Helper to populate districts
+            function populateDistrictsForSelectedState() {
                 const selectedStateName = stateSelect.value;
-                const stateObj = locationsTree.find(s => s.state_name === selectedStateName);
+                const selectedStateCode = stateSelect.selectedOptions[0]?.dataset?.stateCode;
+                const stateObj = locationsTree.find(s =>
+                    s.state_name === selectedStateName ||
+                    (selectedStateCode && s.state_code === selectedStateCode) ||
+                    s.state_name.toLowerCase() === (selectedStateName || "").toLowerCase()
+                );
 
                 districtSelect.innerHTML = '<option value="" selected disabled>-- Select District --</option>';
                 courtComplexSelect.innerHTML = '<option value="" selected disabled>Select District first</option>';
@@ -88,16 +92,32 @@ const SearchModule = (() => {
                     districtSelect.innerHTML = '<option value="" selected disabled>No districts available</option>';
                     districtSelect.disabled = true;
                 }
+            }
+
+            // Bind State change handler
+            stateSelect.addEventListener("change", () => {
+                stateSelect.classList.remove("is-invalid");
+                populateDistrictsForSelectedState();
             });
 
             // Bind District change handler
             districtSelect.addEventListener("change", () => {
                 districtSelect.classList.remove("is-invalid");
                 const selectedStateName = stateSelect.value;
+                const selectedStateCode = stateSelect.selectedOptions[0]?.dataset?.stateCode;
                 const selectedDistName = districtSelect.value;
+                const selectedDistCode = districtSelect.selectedOptions[0]?.dataset?.distCode;
 
-                const stateObj = locationsTree.find(s => s.state_name === selectedStateName);
-                const distObj = stateObj ? stateObj.districts.find(d => d.dist_name === selectedDistName) : null;
+                const stateObj = locationsTree.find(s =>
+                    s.state_name === selectedStateName ||
+                    (selectedStateCode && s.state_code === selectedStateCode) ||
+                    s.state_name.toLowerCase() === (selectedStateName || "").toLowerCase()
+                );
+                const distObj = stateObj ? stateObj.districts.find(d =>
+                    d.dist_name === selectedDistName ||
+                    (selectedDistCode && d.dist_code === selectedDistCode) ||
+                    d.dist_name.toLowerCase() === (selectedDistName || "").toLowerCase()
+                ) : null;
 
                 courtComplexSelect.innerHTML = '<option value="" selected disabled>-- Select Court Complex --</option>';
 
@@ -120,25 +140,16 @@ const SearchModule = (() => {
                 courtComplexSelect.classList.remove("is-invalid");
             });
 
-            // If local cache was empty, fallback asynchronously to /api/locations
-            if (locationsTree.length === 0) {
-                fetch("/api/locations")
-                    .then(r => r.json())
-                    .then(data => {
-                        locationsTree = data.states || [];
-                        if (locationsTree.length > 0 && (stateSelect.options.length <= 1 || stateSelect.options[0].disabled && stateSelect.options.length === 1)) {
-                            stateSelect.innerHTML = '<option value="" selected disabled>-- Select State / UT --</option>';
-                            locationsTree.forEach(s => {
-                                const opt = document.createElement("option");
-                                opt.value = s.state_name;
-                                opt.textContent = s.state_name;
-                                opt.dataset.stateCode = s.state_code;
-                                stateSelect.appendChild(opt);
-                            });
-                        }
-                    })
-                    .catch(e => console.warn("Fallback location fetch warning:", e));
-            }
+            // Always fetch complete, authentic location hierarchy from /api/locations
+            fetch("/api/locations")
+                .then(r => r.json())
+                .then(data => {
+                    locationsTree = data.states || [];
+                    if (stateSelect.value) {
+                        populateDistrictsForSelectedState();
+                    }
+                })
+                .catch(e => console.warn("Location fetch warning:", e));
 
         } catch (err) {
             console.error("Location directory error:", err);

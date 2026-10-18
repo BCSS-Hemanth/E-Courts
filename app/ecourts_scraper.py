@@ -513,12 +513,14 @@ LOCATION_ALIASES: Dict[str, str] = {
     "kashmir": "Jammu and Kashmir",
     "j&k": "Jammu and Kashmir",
     "j and k": "Jammu and Kashmir",
-    "daman": "Dadra and Nagar Haveli and Daman and Diu",
-    "diu": "Dadra and Nagar Haveli and Daman and Diu",
-    "daman and diu": "Dadra and Nagar Haveli and Daman and Diu",
-    "dadra": "Dadra and Nagar Haveli and Daman and Diu",
-    "dadra and nagar haveli": "Dadra and Nagar Haveli and Daman and Diu",
-    "silvassa": "Dadra and Nagar Haveli and Daman and Diu",
+    "daman": "The Dadra And Nagar Haveli And Daman And Diu",
+    "diu": "The Dadra And Nagar Haveli And Daman And Diu",
+    "daman and diu": "The Dadra And Nagar Haveli And Daman And Diu",
+    "dadra": "The Dadra And Nagar Haveli And Daman And Diu",
+    "dadra and nagar haveli": "The Dadra And Nagar Haveli And Daman And Diu",
+    "dadra and nagar haveli and daman and diu": "The Dadra And Nagar Haveli And Daman And Diu",
+    "the dadra and nagar haveli and daman and diu": "The Dadra And Nagar Haveli And Daman And Diu",
+    "silvassa": "The Dadra And Nagar Haveli And Daman And Diu",
     "lakshadweep": "Lakshadweep",
     
     # District & Court Complex aliases
@@ -1436,30 +1438,13 @@ class ECourtsScraperService:
                         "content_type": "application/pdf"
                     })
                     order_url = f"/api/document/{search_id}/{idx}"
+                elif official_pdf_url and "ecourtindia_v6/reports" not in official_pdf_url:
+                    order_url = official_pdf_url
                 elif official_pdf_url:
-                    session.store_document(str(idx), {
-                        "official_url": official_pdf_url,
-                        "filename": doc_filename,
-                        "content_type": "application/pdf"
-                    })
                     order_url = f"/api/document/{search_id}/{idx}"
                 else:
-                    # Fallback authentic PDF record
-                    from app.pdf_report_generator import generate_court_order_pdf
-                    fallback_pdf = generate_court_order_pdf(
-                        court_name=item.get("court_name") or req.court_complex,
-                        case_number=case_raw,
-                        case_type=case_type,
-                        parties=item.get("party_name") or "Parties in Record",
-                        order_date=item.get("order_date") or req.order_date_criteria.from_date,
-                        order_type=order_label
-                    )
-                    session.store_document(str(idx), {
-                        "content": fallback_pdf,
-                        "filename": doc_filename,
-                        "content_type": "application/pdf"
-                    })
-                    order_url = f"/api/document/{search_id}/{idx}"
+                    # No official PDF was uploaded on eCourts for this order record
+                    order_url = None
 
                 results.append(
                     CourtOrderResult(

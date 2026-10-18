@@ -14,7 +14,9 @@ Endpoints:
 """
 
 import asyncio
+import urllib.parse
 from datetime import datetime
+from pathlib import Path
 from fastapi import APIRouter, HTTPException, BackgroundTasks, status, Response, Query
 from fastapi.responses import RedirectResponse
 import logging
@@ -29,7 +31,6 @@ from app.schemas import (
 from app.search_session_manager import session_manager
 from app.ecourts_scraper import ecourts_scraper
 from app.court_location_service import location_service
-from app.pdf_report_generator import generate_court_order_pdf
 
 logger = logging.getLogger(__name__)
 
@@ -162,7 +163,7 @@ async def cancel_search(search_id: str):
     )
 
 
-@router.get("/document/{search_id}/{sl_no}")
+@router.get("/document/{search_id}/{sl_no:path}")
 async def get_court_order_document(search_id: str, sl_no: str):
     """
     Serve the authentic official court order / decree PDF document.
@@ -175,10 +176,12 @@ async def get_court_order_document(search_id: str, sl_no: str):
             detail=f"Search session '{search_id}' has expired or is invalid."
         )
 
-    # Check cached documents in session
-    doc = session.get_document(sl_no)
+    clean_sl = urllib.parse.unquote(sl_no).strip()
+
+    # Check cached documents in session (both decoded and raw key)
+    doc = session.get_document(clean_sl) or session.get_document(sl_no)
     if doc and "content" in doc and doc["content"]:
-        filename = doc.get("filename", f"court_order_{sl_no}.pdf")
+        filename = doc.get("filename", f"court_document_{clean_sl}.pdf")
         return Response(
             content=doc["content"],
             media_type="application/pdf",
@@ -188,41 +191,19 @@ async def get_court_order_document(search_id: str, sl_no: str):
             }
         )
 
-    # If an official external URL was resolved, redirect to it
-    if doc and doc.get("official_url"):
+    # If an official external URL was resolved and is NOT a session-bound eCourts report, redirect to it
+    if doc and doc.get("official_url") and "ecourtindia_v6/reports" not in doc.get("official_url", ""):
         return RedirectResponse(url=doc["official_url"])
-
-    # Fallback: check matching result in session results
-    target_result = None
+    # If matching result has an official direct URL or external URL, redirect to it
     for res in session.results:
-        if str(res.sl_no) == str(sl_no):
-            target_result = res
-            break
+        if str(res.sl_no) == clean_sl or (res.order_date and res.order_date == clean_sl):
+            if res.order_url and res.order_url.startswith("http") and "ecourtindia_v6/reports" not in res.order_url:
+                return RedirectResponse(url=res.order_url)
 
-    if target_result:
-        pdf_bytes = generate_court_order_pdf(
-            court_name=target_result.court_name or "District Court",
-            case_number=target_result.case_number or "N/A",
-            case_type=target_result.case_type or "Civil/Criminal",
-            parties=target_result.party_name or "N/A",
-            order_date=target_result.order_date or "N/A",
-            order_type=target_result.order_type or "Court Order"
-        )
-        safe_cno = (target_result.case_number or f"order_{sl_no}").replace("/", "_").replace(" ", "_")
-        filename = f"{safe_cno}_{target_result.order_type or 'order'}.pdf"
-        session.store_document(sl_no, {"content": pdf_bytes, "filename": filename, "content_type": "application/pdf"})
-        return Response(
-            content=pdf_bytes,
-            media_type="application/pdf",
-            headers={
-                "Content-Disposition": f'inline; filename="{filename}"',
-                "Cache-Control": "private, max-age=3600"
-            }
-        )
-
+    # Document was genuinely not uploaded or is not available on eCourts
     raise HTTPException(
         status_code=status.HTTP_404_NOT_FOUND,
-        detail=f"Court order document #{sl_no} not found for session '{search_id}'."
+        detail=f"Official court order PDF is not available on eCourts portal for record #{clean_sl}."
     )
 
 
